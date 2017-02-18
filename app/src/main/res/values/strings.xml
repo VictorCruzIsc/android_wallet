@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Bitso</string>
+    <string name="f_home_identifier_text">Home</string>
+    <string name="f_activity_identifier_text">User Activity</string>
+    <string name="f_chat_identifier_text">Chat</string>
+    <string name="f_card_identifier_text">Card</string>
+
+    <!-- Tab names -->
+    <string name="tab_home">Home</string>
+    <string name="tab_activity">Activity</string>
+    <string name="tab_chat">Chat</string>
+    <string name="tab_card">Card</string>
+
+    <!-- Menu -->
+    <string name="action_settings">Settings</string>
+
+    <!-- Balances -->
+    <string name="my_balances">MIS BALANCES</string>
+</resources>

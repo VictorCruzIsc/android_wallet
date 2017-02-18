@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical" android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/currency_header"
+        android:text="Currency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/BalanceBalanceCurrency" />
+
+    <TextView
+        android:id="@+id/amount_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/currency_header"
+        android:layout_alignLeft="@+id/currency_header"
+        android:layout_alignStart="@+id/currency_header"
+        style="@style/BalanceBalanceAmount" />
+
+</RelativeLayout>

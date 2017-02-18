@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/balance_color_divider"
+        android:id="@+id/divider"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/currency"
+        android:text="Currency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/divider"
+        android:layout_toRightOf="@+id/divider"
+        android:layout_toEndOf="@+id/divider"
+        style="@style/BalanceBalanceCurrency" />
+
+    <TextView
+        android:id="@+id/amount"
+        android:text="Amountooooo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/currency"
+        android:layout_alignLeft="@+id/currency"
+        android:layout_alignStart="@+id/currency"
+        style="@style/BalanceBalanceAmount" />
+
+
+</RelativeLayout>
