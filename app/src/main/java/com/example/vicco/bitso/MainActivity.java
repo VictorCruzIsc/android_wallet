@@ -45,13 +45,15 @@ public class MainActivity extends AppCompatActivity {
         // Temporal
 
             CompoundBalanceElement total =
-                    new CompoundBalanceElement("Total", new BigDecimal(String.valueOf(1800)));
+                    new CompoundBalanceElement("Saldo Combinado", new BigDecimal(String.valueOf(1900)));
             CompoundBalanceElement mxn =
-                    new CompoundBalanceElement("MXN", new BigDecimal(String.valueOf(600)));
+                    new CompoundBalanceElement("Pesos (MXN)", new BigDecimal(String.valueOf(600)));
+            CompoundBalanceElement dlls =
+                    new CompoundBalanceElement("Dolares (USD)", new BigDecimal(String.valueOf(100)));
             CompoundBalanceElement btc =
-                    new CompoundBalanceElement("BTC", new BigDecimal(String.valueOf(100)));
+                    new CompoundBalanceElement("Bitcoin (BTC)", new BigDecimal(String.valueOf(1100)));
             CompoundBalanceElement eth =
-                    new CompoundBalanceElement("ETH", new BigDecimal(String.valueOf(1100)));
+                new CompoundBalanceElement("Bitcoin (BTC)", new BigDecimal(String.valueOf(1100)));
 
 
         // Member elements
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                             .from(getApplicationContext()), mBalanceListElements);
             adapter.addSectionHeaderItem(total);
             adapter.addItem(mxn);
+            adapter.addItem(dlls);
             adapter.addItem(btc);
             adapter.addItem(eth);
             iBalancesList.setAdapter(adapter);
