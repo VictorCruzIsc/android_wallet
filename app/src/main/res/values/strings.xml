@@ -16,4 +16,8 @@
 
     <!-- Balances -->
     <string name="my_balances">MIS BALANCES</string>
+
+    <!-- Main Activity -->
+    <string name="scan">Leer codigo QR</string>
+    <string name="continue_to_activity">Entrar sin QR</string>
 </resources>
