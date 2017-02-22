@@ -2,6 +2,7 @@ package connectivity;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by vicco on 31/01/17.
@@ -41,15 +43,19 @@ public class HttpHandler {
         this.mBitsoDev = mBitsoDev;
     }
 
-    public String makeServiceCall(String requestPath, String httpMethod, String requestParameters){
-        String authenticationHeader = getAuthenticationHeader(requestPath, httpMethod, requestParameters);
+    public String makeServiceCall(String requestPath, String httpMethod,
+                                  String requestParameters, boolean authentication){
         String requestURL = mBitsoDev + requestPath;
         String response = null;
         try {
             URL url = new URL(requestURL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.addRequestProperty("Authorization", authenticationHeader);
-            connection.setRequestProperty("User-Agent", USER_AGENT);
+            if(authentication){
+                connection.addRequestProperty("Authorization",
+                        getAuthenticationHeader(requestPath, httpMethod,
+                                requestParameters));
+                connection.setRequestProperty("User-Agent", USER_AGENT);
+            }
             connection.setRequestMethod(httpMethod);
             if(connection.getResponseCode() == 200){
                 InputStream inputStream = new BufferedInputStream(connection.getInputStream());
@@ -107,6 +113,27 @@ public class HttpHandler {
             return String.format("Bitso %s:%s:%s", mBitsoKey, nonce, signature);
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String sendPost(String parameters) throws IOException {
+        String apiTokenURL = "https://bitso.com/api/v2/redeem_api_token";
+        URL url = new URL(apiTokenURL);
+        HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+        con.setRequestMethod("POST");
+        con.setRequestProperty("User-Agent", "Android");
+
+        // send Post Request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(parameters);
+        wr.flush();
+        wr.close();
+
+        if(con.getResponseCode() == 200){
+        int responseCode = con.getResponseCode();
+            return convertInputStreamToString(con.getInputStream());
         }
         return null;
     }

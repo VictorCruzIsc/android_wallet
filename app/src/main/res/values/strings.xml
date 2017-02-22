@@ -12,12 +12,19 @@
     <string name="tab_card">Card</string>
 
     <!-- Menu -->
-    <string name="action_settings">Settings</string>
+    <string name="menu_settings">Settings</string>
 
     <!-- Balances -->
-    <string name="my_balances">MIS BALANCES</string>
+    <string name="right_slide_balances">MIS BALANCES</string>
 
     <!-- Main Activity -->
-    <string name="scan">Leer codigo QR</string>
-    <string name="continue_to_activity">Entrar sin QR</string>
+    <string name="main_scan_qr">Leer codigo QR</string>
+    <string name="main_continue">Entrar sin QR</string>
+
+    <!-- Errors -->
+    <string name="cancelled_scan">No fue posible obtener credenciales, intente de nuevo</string>
+    <string name="no_credencials_fetched">No fue posible obtener credenciales, intente de nuevo</string>
+
+    <!-- INstructions -->
+    <string name="place_qr">Coloca QR para poder iniciar sesion</string>
 </resources>

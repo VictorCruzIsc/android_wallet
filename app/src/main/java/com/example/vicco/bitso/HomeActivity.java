@@ -1,6 +1,7 @@
 package com.example.vicco.bitso;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -14,12 +15,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.activities.CaptureActivity;
 import app.adapters.ListViewCompoundBalanceAdapter;
-import app.adapters.RecyclerViewCompoundBalanceAdapter;
 import app.adapters.ViewPagerAdapter;
 import app.fragments.FragmentCard;
 import app.fragments.FragmentChat;
@@ -27,9 +31,12 @@ import app.fragments.FragmentHome;
 import app.fragments.FragmentUserActivity;
 import models.CompoundBalanceElement;
 
-public class MainActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
+    private final String TAG = HomeActivity.class.getSimpleName();
+
     private Context mContext;
     private List<CompoundBalanceElement> mBalanceListElements;
+    private Intent mIntent;
 
     private Toolbar iToolbar;
     private TabLayout iTabLayout;
@@ -40,27 +47,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // Temporal
-
-            CompoundBalanceElement total =
-                    new CompoundBalanceElement("Saldo Combinado", new BigDecimal(String.valueOf(1900)));
-            CompoundBalanceElement mxn =
-                    new CompoundBalanceElement("Pesos (MXN)", new BigDecimal(String.valueOf(600)));
-            CompoundBalanceElement dlls =
-                    new CompoundBalanceElement("Dolares (USD)", new BigDecimal(String.valueOf(100)));
-            CompoundBalanceElement btc =
-                    new CompoundBalanceElement("Bitcoin (BTC)", new BigDecimal(String.valueOf(1100)));
-            CompoundBalanceElement eth =
-                new CompoundBalanceElement("Bitcoin (BTC)", new BigDecimal(String.valueOf(1100)));
-
+        setContentView(R.layout.activity_home);
 
         // Member elements
         {
             mContext = getApplicationContext();
             mBalanceListElements =
                     new ArrayList<CompoundBalanceElement>();
+            setUpCredentials();
         }
 
         // Interface Elements
@@ -81,6 +75,18 @@ public class MainActivity extends AppCompatActivity {
             ListViewCompoundBalanceAdapter adapter =
                     new ListViewCompoundBalanceAdapter(LayoutInflater
                             .from(getApplicationContext()), mBalanceListElements);
+
+            CompoundBalanceElement total =
+                    new CompoundBalanceElement("Saldo Combinado", new BigDecimal(String.valueOf(1900)));
+            CompoundBalanceElement mxn =
+                    new CompoundBalanceElement("Pesos (MXN)", new BigDecimal(String.valueOf(600)));
+            CompoundBalanceElement dlls =
+                    new CompoundBalanceElement("Dolares (USD)", new BigDecimal(String.valueOf(100)));
+            CompoundBalanceElement btc =
+                    new CompoundBalanceElement("Bitcoin (BTC)", new BigDecimal(String.valueOf(1100)));
+            CompoundBalanceElement eth =
+                    new CompoundBalanceElement("Bitcoin (BTC)", new BigDecimal(String.valueOf(1100)));
+
             adapter.addSectionHeaderItem(total);
             adapter.addItem(mxn);
             adapter.addItem(dlls);
@@ -118,5 +124,18 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new FragmentChat(), getResources().getString(R.string.tab_chat));
         adapter.addFragment(new FragmentCard(), getResources().getString(R.string.tab_card));
         viewPager.setAdapter(adapter);
+    }
+
+    private void setUpCredentials(){
+        mIntent = getIntent();
+        if(mIntent != null){
+            String credentialsResponse = mIntent.getStringExtra(CaptureActivity.CREDENTIALS);
+            try {
+                JSONObject jsonObject = new JSONObject(credentialsResponse);
+                Log.d(TAG, credentialsResponse);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

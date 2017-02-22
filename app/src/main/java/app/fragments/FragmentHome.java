@@ -89,7 +89,8 @@ public class FragmentHome extends Fragment {
         @Override
         protected Void doInBackground(String... strings) {
             HttpHandler httpHandler = new HttpHandler();
-            String jsonResponse = httpHandler.makeServiceCall(strings[0], strings[1], strings[2]);
+            String jsonResponse = httpHandler.makeServiceCall(strings[0],
+                    strings[1], strings[2], true);
             if(jsonResponse != null){
                 Log.d(TAG, jsonResponse);
                 try {

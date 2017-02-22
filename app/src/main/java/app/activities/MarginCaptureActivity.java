@@ -8,10 +8,10 @@ import com.journeyapps.barcodescanner.DecoratedBarcodeView;
  * Created by vicco on 20/02/17.
  */
 
-public class SmallCaptureActivity extends CaptureActivity {
+public class MarginCaptureActivity extends CaptureActivity {
     @Override
     protected DecoratedBarcodeView initializeContent() {
-        setContentView(R.layout.capture_small);
+        setContentView(R.layout.activity_zxing_margin_capure);
         return (DecoratedBarcodeView)findViewById(R.id.zxing_barcode_scanner);
     }
 }

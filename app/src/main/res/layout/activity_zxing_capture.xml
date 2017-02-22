@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"/>
 
     <Button
-        android:text="@string/scan"
+        android:text="@string/main_scan_qr"
         android:textAllCaps="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
         android:layout_centerHorizontal="true"/>
 
     <TextView
-        android:text="@string/continue_to_activity"
+        android:text="@string/main_continue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/scanCredentialsBtn"

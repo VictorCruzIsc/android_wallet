@@ -10,17 +10,26 @@
         android:supportsRtl="true"
         android:theme="@style/BitsoTheme">
 
-        <activity android:name="app.activities.ScanCodeActivity">
+        <activity android:name="app.activities.CaptureActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity" />
+        <!--
+        <activity android:name=".HomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        -->
+
+        <activity android:name=".HomeActivity"/>
 
         <activity
-            android:name="app.activities.SmallCaptureActivity"
+            android:name="app.activities.MarginCaptureActivity"
             android:screenOrientation="fullSensor"
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"
