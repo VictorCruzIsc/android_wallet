@@ -10,7 +10,7 @@
 
     <!-- Normal Functionality layout  -->
     <include
-        layout="@layout/container_functionalities"
+        layout="@layout/inner_functionalities"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -44,7 +44,7 @@
 
             <!-- Something else -->
             <include
-                layout="@layout/navigationview_balance_bottom_actions"
+                layout="@layout/inner_balance_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
