@@ -50,6 +50,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         {
             mIntegrator = new IntentIntegrator(this);
             mIntegrator.setOrientationLocked(true);
+            mIntegrator.setBeepEnabled(Boolean.FALSE);
             mIntegrator.setCaptureActivity(MarginCaptureActivity.class);
             mIntegrator.setPrompt(getResources().getString(R.string.place_qr));
         }
@@ -138,6 +139,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                         String message =  jsonError.getString("message");
                         Toast.makeText(CaptureActivity.this, message, Toast.LENGTH_LONG).show();
                     }else{
+                        HttpHandler.setInitialized(Boolean.FALSE);
                         Intent intent = new Intent(CaptureActivity.this, HomeActivity.class);
                         intent.putExtra(CREDENTIALS, response);
                         startActivity(intent);

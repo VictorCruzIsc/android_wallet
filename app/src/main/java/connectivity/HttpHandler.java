@@ -1,5 +1,9 @@
 package connectivity;
 
+import android.content.Context;
+
+import com.example.vicco.bitso.HomeActivity;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -18,34 +22,43 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.HttpsURLConnection;
 
+import Utils.Utils;
+import Utils.UtilsSharedPreferences;
+
 /**
  * Created by vicco on 31/01/17.
  */
 
 public class HttpHandler {
-    private final String TAG = HttpHandler.class.getSimpleName();
-    private final String USER_AGENT = "Bitso-Android";
-    private final String CRYPTO_SPEC = "HmacSHA256";
+    private static final String TAG = HttpHandler.class.getSimpleName();
+    private static final String USER_AGENT = "Bitso-Android";
+    private static final String CRYPTO_SPEC = "HmacSHA256";
+    private static final String mBitso = "https://bitso.com";
 
-    private String mBitsoKey;
-    private String mBitsoSecret;
-    private String mBitsoDev;
+    private static String mBitsoAPI = null;
+    private static String mBitsoSecret = null;
+    private static Boolean mInitialized = Boolean.FALSE;
 
-    public HttpHandler() {
-        mBitsoKey = "OzFHrbosZD";
-        mBitsoSecret = "dc14d07a6856d5a4d035d5703f86b66b";
-        mBitsoDev = "https://dev.bitso.com";
+    public static boolean initHttpHandler(Context context) {
+        if(!mInitialized){
+            UtilsSharedPreferences.initSharedPreferences(context);
+            if(UtilsSharedPreferences.readBoolean(HomeActivity.SP_SET_KEYS)){
+                mBitsoAPI = UtilsSharedPreferences.readString(HomeActivity.SP_API);
+                mBitsoSecret = UtilsSharedPreferences.readString(HomeActivity.SP_SECRET);
+                if(!mBitsoAPI.equals(UtilsSharedPreferences.DEFAULT_STRING_VALUE) &&
+                        !mBitsoSecret.equals(UtilsSharedPreferences.DEFAULT_STRING_VALUE)){
+                    mBitsoAPI = Utils.decryptString(HomeActivity.ALIAS_API, mBitsoAPI);
+                    mBitsoSecret = Utils.decryptString(HomeActivity.ALIAS_SECRET, mBitsoSecret);
+                    mInitialized = Boolean.TRUE;
+                }
+            }
+        }
+        return mInitialized;
     }
 
-    public HttpHandler(String mBitsoKey, String mBitsoSecret, String mBitsoDev) {
-        this.mBitsoKey = mBitsoKey;
-        this.mBitsoSecret = mBitsoSecret;
-        this.mBitsoDev = mBitsoDev;
-    }
-
-    public String makeServiceCall(String requestPath, String httpMethod,
+    public static String makeServiceCall(String requestPath, String httpMethod,
                                   String requestParameters, boolean authentication){
-        String requestURL = mBitsoDev + requestPath;
+        String requestURL = mBitso + requestPath;
         String response = null;
         try {
             URL url = new URL(requestURL);
@@ -91,7 +104,7 @@ public class HttpHandler {
         return stringBuilder.toString();
     }
 
-    private String getAuthenticationHeader(String requestPath,
+    private static String getAuthenticationHeader(String requestPath,
                                            String httpMethod,
                                            String requestParameters) {
         long nonce = System.currentTimeMillis();
@@ -110,14 +123,14 @@ public class HttpHandler {
             bigInteger = new BigInteger(1, arrayOfByte);
             signature = String.format("%0" + (arrayOfByte.length << 1) + "x",
                     new Object[]{bigInteger});
-            return String.format("Bitso %s:%s:%s", mBitsoKey, nonce, signature);
+            return String.format("Bitso %s:%s:%s", mBitsoAPI, nonce, signature);
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public String sendPost(String parameters) throws IOException {
+    public static String sendPost(String parameters) throws IOException {
         String apiTokenURL = "https://bitso.com/api/v2/redeem_api_token";
         URL url = new URL(apiTokenURL);
         HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
@@ -136,5 +149,9 @@ public class HttpHandler {
             return convertInputStreamToString(con.getInputStream());
         }
         return null;
+    }
+
+    public static void setInitialized(Boolean status){
+        mInitialized = status;
     }
 }
