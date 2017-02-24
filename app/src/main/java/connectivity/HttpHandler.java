@@ -25,6 +25,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import Utils.Utils;
 import Utils.UtilsSharedPreferences;
+import app.activities.CaptureActivity;
 
 /**
  * Created by vicco on 31/01/17.
@@ -44,13 +45,13 @@ public class HttpHandler {
         Bitso bitso = new Bitso("", "", 0, Boolean.TRUE, Boolean.TRUE);
         if(!mInitialized){
             UtilsSharedPreferences.initSharedPreferences(context);
-            if(UtilsSharedPreferences.readBoolean(HomeActivity.SP_SET_KEYS)){
-                mBitsoAPI = UtilsSharedPreferences.readString(HomeActivity.SP_API);
-                mBitsoSecret = UtilsSharedPreferences.readString(HomeActivity.SP_SECRET);
+            if(UtilsSharedPreferences.readBoolean(CaptureActivity.SP_SET_KEYS)){
+                mBitsoAPI = UtilsSharedPreferences.readString(CaptureActivity.SP_API);
+                mBitsoSecret = UtilsSharedPreferences.readString(CaptureActivity.SP_SECRET);
                 if(!mBitsoAPI.equals(UtilsSharedPreferences.DEFAULT_STRING_VALUE) &&
                         !mBitsoSecret.equals(UtilsSharedPreferences.DEFAULT_STRING_VALUE)){
-                    mBitsoAPI = Utils.decryptString(HomeActivity.ALIAS_API, mBitsoAPI);
-                    mBitsoSecret = Utils.decryptString(HomeActivity.ALIAS_SECRET, mBitsoSecret);
+                    mBitsoAPI = Utils.decryptString(CaptureActivity.ALIAS_API, mBitsoAPI);
+                    mBitsoSecret = Utils.decryptString(CaptureActivity.ALIAS_SECRET, mBitsoSecret);
                     mInitialized = Boolean.TRUE;
                 }
             }

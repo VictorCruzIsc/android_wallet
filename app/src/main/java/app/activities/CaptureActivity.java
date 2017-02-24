@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,6 +23,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import Utils.Utils;
+import Utils.UtilsSharedPreferences;
 import connectivity.HttpHandler;
 
 /**
@@ -29,7 +32,14 @@ import connectivity.HttpHandler;
  */
 
 public class CaptureActivity extends AppCompatActivity implements View.OnClickListener{
-    public static final String CREDENTIALS = "Credentials";
+    public static final String ALIAS_SECRET = "secret";
+    public static final String ALIAS_API = "api";
+    public static final String ALIAS_CLIENT = "client";
+    public static final String SP_SECRET = ALIAS_SECRET;
+    public static final String SP_API = ALIAS_API;
+    public static final String SP_CLIENT = ALIAS_CLIENT;
+    public static final String SP_SET_KEYS = "setKeys";
+
     private final String TAG = CaptureActivity.class.getSimpleName();
 
     private IntentIntegrator mIntegrator;
@@ -64,7 +74,8 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         // Interface and interactions
         {
             iScanCredentialsBtn.setOnClickListener(this);
-            iContinueToActivityTV.setOnClickListener(this);
+
+            checkUserAlreadyLogged();
         }
     }
 
@@ -100,7 +111,19 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private class GetUserCredentials extends AsyncTask<String, Void, String>{
+    private void checkUserAlreadyLogged(){
+        UtilsSharedPreferences.initSharedPreferences(this);
+        if(UtilsSharedPreferences.readBoolean(SP_SET_KEYS)){
+            String userId = UtilsSharedPreferences.readString(SP_CLIENT);
+            userId = Utils.decryptString(ALIAS_CLIENT, userId);
+            iContinueToActivityTV.setText("Continue as " + userId);
+            iContinueToActivityTV.setOnClickListener(this);
+        }else{
+            iContinueToActivityTV.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private class GetUserCredentials extends AsyncTask<String, Void, Boolean>{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -111,19 +134,20 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected Boolean doInBackground(String... params) {
             HttpHandler httpHandler = new HttpHandler();
             try {
                 String parameters = "token=" + params[0] + "&appname=Android";
-                return httpHandler.sendPost(parameters);
+                String credentialsResponse = httpHandler.sendPost(parameters);
+                return setUpCredentials(credentialsResponse);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
+            return false;
         }
 
         @Override
-        protected void onPostExecute(String response) {
+        protected void onPostExecute(Boolean response) {
             super.onPostExecute(response);
 
             // Dismiss progress dialog
@@ -131,27 +155,72 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 mProgressDialog.dismiss();
             }
 
-            if(response != null){
-                try {
-                    JSONObject json = new JSONObject(response);
-                    if(json.has("error")){
-                        JSONObject jsonError = json.getJSONObject("error");
-                        String message =  jsonError.getString("message");
-                        Toast.makeText(CaptureActivity.this, message, Toast.LENGTH_LONG).show();
-                    }else{
-                        HttpHandler.setInitialized(Boolean.FALSE);
-                        Intent intent = new Intent(CaptureActivity.this, HomeActivity.class);
-                        intent.putExtra(CREDENTIALS, response);
-                        startActivity(intent);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            if(response){
+                HttpHandler.setInitialized(Boolean.FALSE);
+                Intent intent = new Intent(CaptureActivity.this, HomeActivity.class);
+                startActivity(intent);
             }else{
                 String message =  getResources().
                         getString(R.string.no_credencials_fetched);
                 Toast.makeText(CaptureActivity.this, message, Toast.LENGTH_LONG).show();
             }
+        }
+
+        private boolean setUpCredentials(String credentialsResponse){
+            // Create keys in KeyStore
+            Utils.createNewKey(ALIAS_SECRET, CaptureActivity.this);
+            Utils.createNewKey(ALIAS_API, CaptureActivity.this);
+            Utils.createNewKey(ALIAS_CLIENT, CaptureActivity.this);
+
+            try {
+                JSONObject jsonObject = new JSONObject(credentialsResponse);
+                if(!jsonObject.has("error")) {
+                    UtilsSharedPreferences.initSharedPreferences(CaptureActivity.this);
+                    Boolean credentialsSetup = saveCredentials(jsonObject);
+                    UtilsSharedPreferences.writeBoolean(SP_SET_KEYS, credentialsSetup);
+                    return credentialsSetup;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        private boolean saveCredentials(JSONObject jsonObject){
+            String secret = null;
+            String encryptedSecret =  null;
+            String api =  null;
+            String encryptedAPI = null;
+            String client =  null;
+            String encryptedClient = null;
+            try {
+                secret = jsonObject.getString(ALIAS_SECRET);
+                encryptedSecret = Utils.encryptString(ALIAS_SECRET, secret);
+                secret = "";
+                secret =  null;
+
+                api = jsonObject.getString("id");
+                encryptedAPI = Utils.encryptString(ALIAS_API, api);
+                api = "";
+                api = null;
+
+                client = jsonObject.getString(ALIAS_CLIENT);
+                encryptedClient = Utils.encryptString(ALIAS_CLIENT, client);
+                client = "";
+                client = null;
+
+                // Save on shared preferences
+                boolean savedSecret = UtilsSharedPreferences.writeString(SP_SECRET, encryptedSecret);
+                boolean savedAPI = UtilsSharedPreferences.writeString(SP_API, encryptedAPI);
+                boolean savedClient = UtilsSharedPreferences.writeString(SP_CLIENT, encryptedClient);
+
+                Log.d(TAG, "SECRET: " + encryptedSecret + " API: " + encryptedAPI + " CLIENT: " + encryptedClient);
+
+                return (savedSecret & savedAPI & savedClient);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return false;
         }
     }
 }

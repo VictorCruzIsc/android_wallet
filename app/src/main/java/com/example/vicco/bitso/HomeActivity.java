@@ -36,13 +36,7 @@ import connectivity.HttpHandler;
 import models.CompoundBalanceElement;
 
 public class HomeActivity extends AppCompatActivity {
-    public static final String ALIAS_SECRET = "secret";
-    public static final String ALIAS_API = "api";
-    public static final String ALIAS_CLIENT = "client";
-    public static final String SP_SECRET = ALIAS_SECRET;
-    public static final String SP_API = ALIAS_API;
-    public static final String SP_CLIENT = ALIAS_CLIENT;
-    public static final String SP_SET_KEYS = "setKeys";
+
 
     private final String TAG = HomeActivity.class.getSimpleName();
 
@@ -67,7 +61,6 @@ public class HomeActivity extends AppCompatActivity {
             mContext = getApplicationContext();
             mBalanceListElements =
                     new ArrayList<CompoundBalanceElement>();
-            setUpCredentials();
         }
 
         // Interface Elements
@@ -137,62 +130,5 @@ public class HomeActivity extends AppCompatActivity {
         adapter.addFragment(new FragmentChat(), getResources().getString(R.string.tab_chat));
         adapter.addFragment(new FragmentCard(), getResources().getString(R.string.tab_card));
         viewPager.setAdapter(adapter);
-    }
-
-    private void setUpCredentials(){
-        // Create keys in KeyStore
-        Utils.createNewKey(ALIAS_SECRET, this);
-        Utils.createNewKey(ALIAS_API, this);
-        Utils.createNewKey(ALIAS_CLIENT, this);
-
-        mIntent = getIntent();
-        if(mIntent != null){
-            String credentialsResponse = mIntent.getStringExtra(CaptureActivity.CREDENTIALS);
-            Log.d(TAG, credentialsResponse);
-            try {
-                JSONObject jsonObject = new JSONObject(credentialsResponse);
-                UtilsSharedPreferences.initSharedPreferences(this);
-                UtilsSharedPreferences.writeBoolean(SP_SET_KEYS, saveCredentials(jsonObject));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private boolean saveCredentials(JSONObject jsonObject){
-        String secret = null;
-        String encryptedSecret =  null;
-        String api =  null;
-        String encryptedAPI = null;
-        String client =  null;
-        String encryptedClient = null;
-        try {
-            secret = jsonObject.getString(ALIAS_SECRET);
-            encryptedSecret = Utils.encryptString(ALIAS_SECRET, secret);
-            secret = "";
-            secret =  null;
-
-            api = jsonObject.getString("id");
-            encryptedAPI = Utils.encryptString(ALIAS_API, api);
-            api = "";
-            api = null;
-
-            client = jsonObject.getString(ALIAS_CLIENT);
-            encryptedClient = Utils.encryptString(ALIAS_CLIENT, client);
-            client = "";
-            client = null;
-
-            // Save on shared preferences
-            boolean savedSecret = UtilsSharedPreferences.writeString(SP_SECRET, encryptedSecret);
-            boolean savedAPI = UtilsSharedPreferences.writeString(SP_API, encryptedAPI);
-            boolean savedClient = UtilsSharedPreferences.writeString(SP_CLIENT, encryptedClient);
-
-            Log.d(TAG, "SECRET: " + encryptedSecret + " API: " + encryptedAPI + " CLIENT: " + encryptedClient);
-
-            return (savedSecret & savedAPI & savedClient);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 }
