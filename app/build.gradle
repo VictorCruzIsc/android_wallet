@@ -24,7 +24,6 @@ android {
         exclude 'META-INF/io.netty.versions.properties'
     }
 
-
     dexOptions {
         incremental true
         javaMaxHeapSize "4g"
@@ -51,9 +50,6 @@ dependencies {
 }
 //*/
 
-
-
-//*
 apply plugin: 'com.android.application'
 
 android {
@@ -66,12 +62,33 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        jackOptions {
+            enabled true
+        }
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/io.netty.versions.properties'
+    }
+
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -85,6 +102,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'com.journeyapps:zxing-android-embedded:3.4.0'
+    compile 'com.bitso:bitso-java:3.0.2'
     testCompile 'junit:junit:4.12'
 }
-//*/

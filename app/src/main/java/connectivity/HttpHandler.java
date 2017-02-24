@@ -2,6 +2,7 @@ package connectivity;
 
 import android.content.Context;
 
+import com.bitso.Bitso;
 import com.example.vicco.bitso.HomeActivity;
 
 import java.io.BufferedInputStream;
@@ -40,6 +41,7 @@ public class HttpHandler {
     private static Boolean mInitialized = Boolean.FALSE;
 
     public static boolean initHttpHandler(Context context) {
+        Bitso bitso = new Bitso("", "", 0, Boolean.TRUE, Boolean.TRUE);
         if(!mInitialized){
             UtilsSharedPreferences.initSharedPreferences(context);
             if(UtilsSharedPreferences.readBoolean(HomeActivity.SP_SET_KEYS)){
