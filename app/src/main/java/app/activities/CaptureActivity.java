@@ -74,7 +74,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         // Interface and interactions
         {
             iScanCredentialsBtn.setOnClickListener(this);
-
             checkUserAlreadyLogged();
         }
     }
@@ -116,7 +115,8 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         if(UtilsSharedPreferences.readBoolean(SP_SET_KEYS)){
             String userId = UtilsSharedPreferences.readString(SP_CLIENT);
             userId = Utils.decryptString(ALIAS_CLIENT, userId);
-            iContinueToActivityTV.setText("Continue as " + userId);
+            iContinueToActivityTV.setText(
+                    getResources().getString(R.string.main_continue) + userId);
             iContinueToActivityTV.setOnClickListener(this);
         }else{
             iContinueToActivityTV.setVisibility(View.INVISIBLE);
@@ -128,7 +128,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         protected void onPreExecute() {
             super.onPreExecute();
             mProgressDialog = new ProgressDialog(CaptureActivity.this);
-            mProgressDialog.setMessage("Login...");
+            mProgressDialog.setMessage(getResources().getString(R.string.login));
             mProgressDialog.setCancelable(Boolean.FALSE);
             mProgressDialog.show();
         }
@@ -136,14 +136,9 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected Boolean doInBackground(String... params) {
             HttpHandler httpHandler = new HttpHandler();
-            try {
-                String parameters = "token=" + params[0] + "&appname=Android";
-                String credentialsResponse = httpHandler.sendPost(parameters);
-                return setUpCredentials(credentialsResponse);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return false;
+            String parameters = "token=" + params[0] + "&appname=Android";
+            String credentialsResponse = httpHandler.sendPost(parameters);
+            return setUpCredentials(credentialsResponse);
         }
 
         @Override

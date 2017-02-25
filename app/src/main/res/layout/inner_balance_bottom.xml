@@ -15,4 +15,9 @@
         android:text="@string/f_chat_identifier_text"
         style="@style/BalanceBalanceAmount"/>
 
+    <Button
+        android:text="Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/addButton"/>
 </LinearLayout>

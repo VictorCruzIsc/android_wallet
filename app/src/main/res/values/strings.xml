@@ -16,15 +16,23 @@
 
     <!-- Balances -->
     <string name="right_slide_balances">MIS BALANCES</string>
+    <string name="compound_balance">Saldo Combinado</string>
+    <string name="mxn_balance">Pesos (MXN)</string>
+    <string name="btc_balance">Bitcoin (BTC)</string>
+    <string name="eth_balance">Ether (ETH)</string>
 
     <!-- Main Activity -->
     <string name="main_scan_qr">Leer codigo QR</string>
-    <string name="main_continue">Entrar sin QR</string>
+    <string name="main_continue">Continuar como </string>
 
     <!-- Errors -->
     <string name="cancelled_scan">No fue posible obtener credenciales, intente de nuevo</string>
     <string name="no_credencials_fetched">No fue posible obtener credenciales, intente de nuevo</string>
+    <string name="no_compound_balance">No fue posible calcular el balance compuesto</string>
 
-    <!-- INstructions -->
+    <!-- Instructions -->
     <string name="place_qr">Coloca QR para poder iniciar sesion</string>
+
+    <!-- Status -->
+    <string name="login">Iniciando sesion...</string>
 </resources>

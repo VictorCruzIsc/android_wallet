@@ -34,13 +34,22 @@ public class ListViewCompoundBalanceAdapter extends BaseAdapter{
 
     public void addItem(CompoundBalanceElement item){
         mObjects.add(item);
-        notifyDataSetChanged();
     }
 
     public void addSectionHeaderItem(CompoundBalanceElement item){
         mObjects.add(item);
         mSectionHeaders.put((mObjects.size() - 1), Boolean.TRUE);
-        notifyDataSetChanged();
+    }
+
+    public void processList(List<CompoundBalanceElement> elements){
+        int totalElements = elements.size();
+        if(totalElements > 0) {
+            mObjects.clear();
+            addSectionHeaderItem(elements.get(0));
+            for(int i=1; i<totalElements; i++){
+                addItem(elements.get(i));
+            }
+        }
     }
 
     // Required implementation methods

@@ -2,7 +2,6 @@ package connectivity;
 
 import android.content.Context;
 
-import com.bitso.Bitso;
 import com.example.vicco.bitso.HomeActivity;
 
 import java.io.BufferedInputStream;
@@ -31,7 +30,7 @@ import app.activities.CaptureActivity;
  * Created by vicco on 31/01/17.
  */
 
-public class HttpHandler {
+public class HttpHandler{
     private static final String TAG = HttpHandler.class.getSimpleName();
     private static final String USER_AGENT = "Bitso-Android";
     private static final String CRYPTO_SPEC = "HmacSHA256";
@@ -42,7 +41,6 @@ public class HttpHandler {
     private static Boolean mInitialized = Boolean.FALSE;
 
     public static boolean initHttpHandler(Context context) {
-        Bitso bitso = new Bitso("", "", 0, Boolean.TRUE, Boolean.TRUE);
         if(!mInitialized){
             UtilsSharedPreferences.initSharedPreferences(context);
             if(UtilsSharedPreferences.readBoolean(CaptureActivity.SP_SET_KEYS)){
@@ -58,6 +56,7 @@ public class HttpHandler {
         }
         return mInitialized;
     }
+
 
     public static String makeServiceCall(String requestPath, String httpMethod,
                                   String requestParameters, boolean authentication){
@@ -133,23 +132,60 @@ public class HttpHandler {
         return null;
     }
 
-    public static String sendPost(String parameters) throws IOException {
+    public static String sendPost(String parameters){
         String apiTokenURL = "https://bitso.com/api/v2/redeem_api_token";
-        URL url = new URL(apiTokenURL);
-        HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-        con.setRequestMethod("POST");
-        con.setRequestProperty("User-Agent", "Android");
+        try {
+            URL url = new URL(apiTokenURL);
+            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("User-Agent", "Android");
 
-        // send Post Request
-        con.setDoOutput(true);
-        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-        wr.writeBytes(parameters);
-        wr.flush();
-        wr.close();
+            // send Post Request
+            con.setDoOutput(true);
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+            wr.writeBytes(parameters);
+            wr.flush();
+            wr.close();
 
-        if(con.getResponseCode() == 200){
-        int responseCode = con.getResponseCode();
-            return convertInputStreamToString(con.getInputStream());
+            if(con.getResponseCode() == 200){
+                int responseCode = con.getResponseCode();
+                return convertInputStreamToString(con.getInputStream());
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String sendGet(String requestedURL, String parameters){
+        try {
+            URL url = new URL(requestedURL);
+
+            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("User-Agent", "Android");
+
+            // send Post Request
+            con.setDoOutput(true);
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+            wr.writeBytes(parameters);
+            wr.flush();
+            wr.close();
+
+            if(con.getResponseCode() == 200){
+                int responseCode = con.getResponseCode();
+                return convertInputStreamToString(con.getInputStream());
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }

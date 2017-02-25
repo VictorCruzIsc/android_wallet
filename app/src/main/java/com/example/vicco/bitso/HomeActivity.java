@@ -1,8 +1,10 @@
 package com.example.vicco.bitso;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -14,8 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,33 +29,33 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import Utils.Utils;
-import Utils.UtilsSharedPreferences;
-import app.activities.CaptureActivity;
 import app.adapters.ListViewCompoundBalanceAdapter;
+import app.adapters.RecyclerViewCompoundBalanceAdapter;
 import app.adapters.ViewPagerAdapter;
 import app.fragments.FragmentCard;
 import app.fragments.FragmentChat;
 import app.fragments.FragmentHome;
 import app.fragments.FragmentUserActivity;
 import connectivity.HttpHandler;
+import models.BitsoBalance;
+import models.BitsoTicker;
 import models.CompoundBalanceElement;
 
-public class HomeActivity extends AppCompatActivity {
-
-
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
     private final String TAG = HomeActivity.class.getSimpleName();
 
     private Context mContext;
     private List<CompoundBalanceElement> mBalanceListElements;
     private Intent mIntent;
     private SharedPreferences mSharedPreferences;
+    ListViewCompoundBalanceAdapter mAdapter;
 
     private Toolbar iToolbar;
     private TabLayout iTabLayout;
     private ViewPager iViewPager;
     private DrawerLayout iBalanceDrawer;
     private ListView iBalancesList;
+    private Button iButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +67,9 @@ public class HomeActivity extends AppCompatActivity {
             mContext = getApplicationContext();
             mBalanceListElements =
                     new ArrayList<CompoundBalanceElement>();
+            mAdapter = new ListViewCompoundBalanceAdapter(
+                    LayoutInflater.from(getApplicationContext()),
+                    mBalanceListElements);
         }
 
         // Interface Elements
@@ -74,31 +83,13 @@ public class HomeActivity extends AppCompatActivity {
             iTabLayout = (TabLayout) findViewById(R.id.tabs);
             iTabLayout.setupWithViewPager(iViewPager);
             iBalancesList = (ListView) findViewById(R.id.balanceList);
+            iButton = (Button) findViewById(R.id.addButton);
         }
 
         // Interface and interactions
         {
-            ListViewCompoundBalanceAdapter adapter =
-                    new ListViewCompoundBalanceAdapter(LayoutInflater
-                            .from(getApplicationContext()), mBalanceListElements);
-
-            CompoundBalanceElement total =
-                    new CompoundBalanceElement("Saldo Combinado", new BigDecimal(String.valueOf(1900)));
-            CompoundBalanceElement mxn =
-                    new CompoundBalanceElement("Pesos (MXN)", new BigDecimal(String.valueOf(600)));
-            CompoundBalanceElement dlls =
-                    new CompoundBalanceElement("Dolares (USD)", new BigDecimal(String.valueOf(100)));
-            CompoundBalanceElement btc =
-                    new CompoundBalanceElement("Bitcoin (BTC)", new BigDecimal(String.valueOf(1100)));
-            CompoundBalanceElement eth =
-                    new CompoundBalanceElement("Bitcoin (BTC)", new BigDecimal(String.valueOf(1100)));
-
-            adapter.addSectionHeaderItem(total);
-            adapter.addItem(mxn);
-            adapter.addItem(dlls);
-            adapter.addItem(btc);
-            adapter.addItem(eth);
-            iBalancesList.setAdapter(adapter);
+            iButton.setOnClickListener(this);
+            iBalancesList.setAdapter(mAdapter);
         }
     }
 
@@ -112,10 +103,11 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_search:
-                if (iBalanceDrawer.isDrawerOpen(GravityCompat.END)) {
-                    iBalanceDrawer.closeDrawer(GravityCompat.END);
+                new GetCompoundBalance().execute();
+                if (iBalanceDrawer.isDrawerOpen(GravityCompat.START)) {
+                    iBalanceDrawer.closeDrawer(GravityCompat.START);
                 } else {
-                    iBalanceDrawer.openDrawer(GravityCompat.END);
+                    iBalanceDrawer.openDrawer(GravityCompat.START);
                 }
                 return Boolean.TRUE;
             default:
@@ -130,5 +122,143 @@ public class HomeActivity extends AppCompatActivity {
         adapter.addFragment(new FragmentChat(), getResources().getString(R.string.tab_chat));
         adapter.addFragment(new FragmentCard(), getResources().getString(R.string.tab_card));
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.addButton:
+                Log.d(TAG, "Click on add Button");
+                CompoundBalanceElement total =
+                        new CompoundBalanceElement("SX", new BigDecimal(String.valueOf(1900)));
+                mBalanceListElements.add(total);
+                mAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
+
+    // Inner classes
+    private class GetCompoundBalance extends AsyncTask<Void, Void, Void> {
+        private List<CompoundBalanceElement> balanceListElements;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            HttpHandler.initHttpHandler(HomeActivity.this);
+            balanceListElements = new ArrayList<CompoundBalanceElement>();
+            /*
+            mProgressDialog =  new ProgressDialog(getActivity());
+            mProgressDialog.setMessage("Fetching user ledger operations");
+            mProgressDialog.setCancelable(Boolean.FALSE);
+            mProgressDialog.show();
+            */
+
+        }
+
+        @Override
+        //new FillListAsyncTask().execute("/api/v3/ledger", "GET", "");
+        protected Void doInBackground(Void... strings) {
+            // Get balance
+            String balanceResponse = HttpHandler.makeServiceCall("/api/v3/balance/",
+                    "GET", "", true);
+            // Get ticker
+            String tickerResponse =
+                    HttpHandler.sendGet("https://api.bitso.com/v3/ticker/", "");
+            if(!processCompoundBalance(balanceResponse, tickerResponse)){
+                String error = getString(R.string.no_compound_balance);
+                Log.e(TAG, error);
+                Toast.makeText(HomeActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // Dismiss progress dialog
+            /*
+            if(mProgressDialog.isShowing()){
+                mProgressDialog.dismiss();
+            }
+            */
+
+            // Update List
+            mAdapter.notifyDataSetChanged();
+        }
+
+        private boolean processCompoundBalance(String stringBalance, String stringTicker){
+            BitsoBalance balance =  null;
+            BitsoTicker[] tickers =  null;
+            int totalCurrencyTickers = 0;
+
+            if((stringBalance != null) && (stringTicker != null)){
+                Log.d(TAG, stringBalance);
+                Log.d(TAG, stringTicker);
+                try {
+                    // Process balance
+                    JSONObject jsonBalance = new JSONObject(stringBalance);
+                    balance = new BitsoBalance(jsonBalance);
+
+                    // ProcessTicker
+                    JSONObject jsonTicker = new JSONObject(stringTicker);
+                    if(jsonTicker.has("success") && jsonTicker.has("payload")){
+                        JSONArray currencyTickers = jsonTicker.getJSONArray("payload");
+                        totalCurrencyTickers =  currencyTickers.length();
+                        tickers = new BitsoTicker[totalCurrencyTickers];
+                        for(int i=0; i<totalCurrencyTickers; i++){
+                            tickers[i] = new BitsoTicker(currencyTickers.getJSONObject(i));
+                        }
+                    }
+
+                    // Verification
+                    if((balance == null) || (tickers == null)){
+                        return false;
+                    }
+
+                    // Start building compound balance
+                    BigDecimal total = balance.mxnAvailable;
+
+                    balanceListElements.add(
+                            new CompoundBalanceElement(
+                                    getResources().getString(R.string.mxn_balance),
+                                    total));
+
+                    for(int i=0; i<totalCurrencyTickers; i++){
+                        BitsoTicker currentTicker =  tickers[i];
+                        BigDecimal currentLast = currentTicker.last;
+                        String header = "";
+                        BigDecimal currencyAmount = null;
+                        switch(currentTicker.book){
+                            case BTC_MXN:
+                                currencyAmount = balance.btcAvailable;
+                                header = getResources().getString(R.string.btc_balance);
+                                break;
+                            case ETH_MXN:
+                                currencyAmount = balance.ethAvailable;
+                                header = getResources().getString(R.string.eth_balance);
+                                break;
+                            default:
+                                break;
+                        }
+
+                        total= total.add(currencyAmount.multiply(currentLast));
+                        balanceListElements.add(new CompoundBalanceElement(
+                                header,
+                                currencyAmount));
+                    }
+
+                    balanceListElements.add(0, new CompoundBalanceElement(
+                            getResources().getString(R.string.compound_balance),
+                            total));
+
+                    mAdapter.processList(balanceListElements);
+
+                    return true;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return false;
+        }
     }
 }

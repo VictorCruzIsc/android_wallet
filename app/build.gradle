@@ -11,9 +11,11 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        /*
         jackOptions {
             enabled true
         }
+        */
     }
 
     buildTypes {
@@ -23,6 +25,7 @@ android {
         }
     }
 
+    /*
     packagingOptions {
         exclude 'META-INF/INDEX.LIST'
         exclude 'META-INF/LICENSE'
@@ -38,6 +41,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    */
 }
 
 dependencies {
@@ -50,6 +54,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'com.journeyapps:zxing-android-embedded:3.4.0'
-    compile 'com.bitso:bitso-java:3.0.2'
+    //compile 'com.bitso:bitso-java:3.0.2'
     testCompile 'junit:junit:4.12'
 }
