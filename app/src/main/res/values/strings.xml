@@ -38,6 +38,8 @@
 
     <!-- Instructions -->
     <string name="place_qr">Coloca QR para poder iniciar sesion</string>
+    <string name="open_drower">Abriendo drawer</string>
+    <string name="close_drower">Cerrando drawer</string>
 
     <!-- Status -->
     <string name="login">Iniciando sesion...</string>

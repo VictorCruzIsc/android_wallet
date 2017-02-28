@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -45,9 +48,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private final String TAG = HomeActivity.class.getSimpleName();
 
     private List<CompoundBalanceElement> mBalanceListElements;
-    ListViewCompoundBalanceAdapter mAdapter;
+    private ListViewCompoundBalanceAdapter mAdapter;
+    private ActionBarDrawerToggle mActionBarDrawerToggle;
 
+    private CoordinatorLayout iCoordinatorLayout;
     private Toolbar iToolbar;
+    private NavigationView iNavigationView;
     private TabLayout iTabLayout;
     private ViewPager iViewPager;
     private DrawerLayout iBalanceDrawer;
@@ -60,17 +66,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // Member elements
-        {
-            mBalanceListElements =
-                    new ArrayList<CompoundBalanceElement>();
-            mAdapter = new ListViewCompoundBalanceAdapter(
-                    LayoutInflater.from(getApplicationContext()),
-                    mBalanceListElements);
-        }
-
         // Interface Elements
         {
+            iNavigationView = (NavigationView) findViewById(R.id.balanceRightPanelView);
+            iCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
             iBalanceDrawer =
                     (DrawerLayout) findViewById(R.id.balanceRightPanelDrawer);
             iToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -84,12 +83,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             iConfigurationsLinearLayout = (LinearLayout) findViewById(R.id.balance_configuration);
         }
 
+        // Member elements
+        {
+            mBalanceListElements =
+                    new ArrayList<CompoundBalanceElement>();
+            mAdapter = new ListViewCompoundBalanceAdapter(
+                    LayoutInflater.from(getApplicationContext()),
+                    mBalanceListElements);
+            mActionBarDrawerToggle = getActionBarDrawerToggle();
+        }
+
         // Interface and interactions
         {
             iBalancesList.setAdapter(mAdapter);
             iBalancesList.setOnItemClickListener(this);
             iProfileLinearLayout.setOnClickListener(this);
             iConfigurationsLinearLayout.setOnClickListener(this);
+            iBalanceDrawer.setDrawerListener(mActionBarDrawerToggle);
         }
     }
 
@@ -109,25 +119,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d(TAG, getResources().getString(R.string.no_internet_connection));
                 }
 
-                if (iBalanceDrawer.isDrawerOpen(GravityCompat.START)) {
-                    iBalanceDrawer.closeDrawer(GravityCompat.START);
+                if (iBalanceDrawer.isDrawerOpen(GravityCompat.END)) {
+                    iBalanceDrawer.closeDrawer(GravityCompat.END);
                 } else {
-                    iBalanceDrawer.openDrawer(GravityCompat.START);
+                    iBalanceDrawer.openDrawer(GravityCompat.END);
                 }
 
                 return Boolean.TRUE;
             default:
                 return Boolean.TRUE;
         }
-    }
-
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new FragmentHome(), getResources().getString(R.string.tab_home));
-        adapter.addFragment(new FragmentUserActivity(), getResources().getString(R.string.tab_activity));
-        adapter.addFragment(new FragmentChat(), getResources().getString(R.string.tab_chat));
-        adapter.addFragment(new FragmentCard(), getResources().getString(R.string.tab_card));
-        viewPager.setAdapter(adapter);
     }
 
     @Override
@@ -153,6 +154,48 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     element.getColor(),
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new FragmentHome(), getResources().getString(R.string.tab_home));
+        adapter.addFragment(new FragmentUserActivity(), getResources().getString(R.string.tab_activity));
+        adapter.addFragment(new FragmentChat(), getResources().getString(R.string.tab_chat));
+        adapter.addFragment(new FragmentCard(), getResources().getString(R.string.tab_card));
+        viewPager.setAdapter(adapter);
+    }
+
+    private ActionBarDrawerToggle getActionBarDrawerToggle(){
+        return new ActionBarDrawerToggle(
+                this, iBalanceDrawer, iToolbar, R.string.open_drower,
+                R.string.close_drower){
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+
+                // Ask coordinator to move menu width from rigth to left
+                iCoordinatorLayout.setTranslationX(-(slideOffset * drawerView.getWidth()));
+                iBalanceDrawer.bringChildToFront(drawerView);
+                iBalanceDrawer.requestLayout();
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                Log.d(TAG, "Drawer opened");
+                if(Utils.isNetworkAvailable(HomeActivity.this)) {
+                    new GetCompoundBalance().execute();
+                }else{
+                    Log.d(TAG, getResources().getString(R.string.no_internet_connection));
+                }
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                Log.d(TAG, "Drawer closed");
+            }
+        };
     }
 
     // Inner classes
