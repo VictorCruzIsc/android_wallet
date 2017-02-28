@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -26,11 +27,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.activities.CaptureActivity;
 import app.adapters.ListViewCompoundBalanceAdapter;
-import app.adapters.RecyclerViewCompoundBalanceAdapter;
 import app.adapters.ViewPagerAdapter;
 import app.fragments.FragmentCard;
 import app.fragments.FragmentChat;
@@ -40,6 +42,8 @@ import connectivity.HttpHandler;
 import models.BitsoBalance;
 import models.BitsoTicker;
 import models.CompoundBalanceElement;
+
+import Utils.Utils;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
     private final String TAG = HomeActivity.class.getSimpleName();
@@ -55,7 +59,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private ViewPager iViewPager;
     private DrawerLayout iBalanceDrawer;
     private ListView iBalancesList;
-    private Button iButton;
+    private LinearLayout iProfileLinearLayout;
+    private LinearLayout iConfigurationsLinearLayout;
+    //private Button iButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,13 +89,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             iTabLayout = (TabLayout) findViewById(R.id.tabs);
             iTabLayout.setupWithViewPager(iViewPager);
             iBalancesList = (ListView) findViewById(R.id.balanceList);
-            iButton = (Button) findViewById(R.id.addButton);
+            iProfileLinearLayout = (LinearLayout) findViewById(R.id.balance_profile);
+            iConfigurationsLinearLayout = (LinearLayout) findViewById(R.id.balance_configuration);
+            //iButton = (Button) findViewById(R.id.addButton);
         }
 
         // Interface and interactions
         {
-            iButton.setOnClickListener(this);
+            //iButton.setOnClickListener(this);
             iBalancesList.setAdapter(mAdapter);
+            iProfileLinearLayout.setOnClickListener(this);
+            iConfigurationsLinearLayout.setOnClickListener(this);
         }
     }
 
@@ -103,12 +113,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_search:
-                new GetCompoundBalance().execute();
-                if (iBalanceDrawer.isDrawerOpen(GravityCompat.START)) {
-                    iBalanceDrawer.closeDrawer(GravityCompat.START);
-                } else {
-                    iBalanceDrawer.openDrawer(GravityCompat.START);
+                if(Utils.isNetworkAvailable(this)) {
+                    new GetCompoundBalance().execute();
+                }else{
+                    Log.d(TAG, getResources().getString(R.string.no_internet_connection));
                 }
+
+                if (iBalanceDrawer.isDrawerOpen(GravityCompat.END)) {
+                    iBalanceDrawer.closeDrawer(GravityCompat.END);
+                } else {
+                    iBalanceDrawer.openDrawer(GravityCompat.END);
+                }
+
                 return Boolean.TRUE;
             default:
                 return Boolean.TRUE;
@@ -127,12 +143,20 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch(v.getId()){
+            /*
             case R.id.addButton:
                 Log.d(TAG, "Click on add Button");
                 CompoundBalanceElement total =
                         new CompoundBalanceElement("SX", new BigDecimal(String.valueOf(1900)));
                 mBalanceListElements.add(total);
                 mAdapter.notifyDataSetChanged();
+                break;
+            */
+            case R.id.balance_profile:
+                Toast.makeText(this, "Click on profile", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.balance_configuration:
+                Toast.makeText(this, "Click on configuration", Toast.LENGTH_LONG).show();
                 break;
         }
     }
@@ -152,7 +176,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             mProgressDialog.setCancelable(Boolean.FALSE);
             mProgressDialog.show();
             */
-
         }
 
         @Override
@@ -217,11 +240,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                     // Start building compound balance
                     BigDecimal total = balance.mxnAvailable;
-
+                    BigDecimal mxnAmount =  total;
+                    mxnAmount = mxnAmount.setScale(4, RoundingMode.DOWN);
                     balanceListElements.add(
                             new CompoundBalanceElement(
                                     getResources().getString(R.string.mxn_balance),
-                                    total));
+                                    mxnAmount));
 
                     for(int i=0; i<totalCurrencyTickers; i++){
                         BitsoTicker currentTicker =  tickers[i];
@@ -241,7 +265,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                 break;
                         }
 
-                        total= total.add(currencyAmount.multiply(currentLast));
+                        total = total.add(currencyAmount.multiply(currentLast));
+
+                        currencyAmount = currencyAmount.setScale(4, RoundingMode.DOWN);
+
+                        total = total.setScale(2, RoundingMode.DOWN);
+
                         balanceListElements.add(new CompoundBalanceElement(
                                 header,
                                 currencyAmount));

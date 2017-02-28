@@ -85,8 +85,15 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 mIntegrator.initiateScan();
                 break;
             case R.id.continueToActivityTV:
+                if(!Utils.isNetworkAvailable(this)){
+                    Toast.makeText(this, getResources().getString(
+                            R.string.no_internet_connection), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
+
                 break;
         }
     }
@@ -94,6 +101,13 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if(!Utils.isNetworkAvailable(this)){
+            Toast.makeText(this, getResources().getString(
+                    R.string.no_internet_connection), Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if(result != null) {
             if(result.getContents() == null) {
                 String message =  getResources().getString(R.string.cancelled_scan);
@@ -129,7 +143,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             super.onPreExecute();
             mProgressDialog = new ProgressDialog(CaptureActivity.this);
             mProgressDialog.setMessage(getResources().getString(R.string.login));
-            mProgressDialog.setCancelable(Boolean.FALSE);
+            mProgressDialog.setCancelable(Boolean.TRUE);
             mProgressDialog.show();
         }
 

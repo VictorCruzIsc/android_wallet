@@ -19,3 +19,34 @@
         style="@style/BalanceBalanceAmount" />
 
 </RelativeLayout>
+
+    <!-- <?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:orientation="vertical" android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/currency_header"
+            android:text="Currency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/BalanceBalanceCurrency" />
+
+        <TextView
+            android:text="1500.00"
+            android:id="@+id/amount_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/BalanceBalanceAmount"
+            android:layout_below="@+id/currency_header"
+            android:layout_toEndOf="@+id/textView"/>
+
+        <TextView
+            android:text="$"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/BalanceBalanceAmount"
+            android:id="@+id/textView"
+            android:layout_below="@+id/currency_header"
+            android:layout_alignStart="@+id/currency_header"/>
+
+    </RelativeLayout> -->

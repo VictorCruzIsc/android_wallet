@@ -73,7 +73,7 @@ public class ListViewCompoundBalanceAdapter extends BaseAdapter{
     public View getView(int position, View view, ViewGroup viewGroup) {
         ViewHolder holder = null;
         int rowType = getItemViewType(position);
-
+        String amount = "";
         if(view == null){
             holder = new ViewHolder();
             switch (rowType){
@@ -94,8 +94,14 @@ public class ListViewCompoundBalanceAdapter extends BaseAdapter{
         }
 
         CompoundBalanceElement element = (CompoundBalanceElement) getItem(position);
+        amount = element.getTotal().toString();
+        if(rowType == TYPE_HEADER){
+            amount = "$" + amount + " MXN";
+        }
+
         holder.mCurrency.setText(element.getCurrency());
-        holder.mTotal.setText(element.getTotal().toString());
+        holder.mTotal.setText(amount);
+
         return  view;
     }
 

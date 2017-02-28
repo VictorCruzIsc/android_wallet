@@ -20,12 +20,15 @@
     <string name="mxn_balance">Pesos (MXN)</string>
     <string name="btc_balance">Bitcoin (BTC)</string>
     <string name="eth_balance">Ether (ETH)</string>
+    <string name="profile_lbl">Perfil</string>
+    <string name="configurations_lbl">Configuracion</string>
 
     <!-- Main Activity -->
     <string name="main_scan_qr">Leer codigo QR</string>
     <string name="main_continue">Continuar como </string>
 
     <!-- Errors -->
+    <string name="no_internet_connection">El dispositivo no tiene conexion a internet, porfavor conectate y vuelve a intentarlo</string>
     <string name="cancelled_scan">No fue posible obtener credenciales, intente de nuevo</string>
     <string name="no_credencials_fetched">No fue posible obtener credenciales, intente de nuevo</string>
     <string name="no_compound_balance">No fue posible calcular el balance compuesto</string>
@@ -35,4 +38,5 @@
 
     <!-- Status -->
     <string name="login">Iniciando sesion...</string>
+    <string name="fetching_ledger">Obteniendo operaciones de ledger...</string>
 </resources>

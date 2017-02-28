@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.vicco.bitso.R;
@@ -39,6 +40,7 @@ public class FragmentHome extends Fragment {
     public Activity mActivity;
 
     public RecyclerView iRecyclerView;
+    private ProgressBar iProgressBar;
 
     public FragmentHome() {
         // Required empty public constructor
@@ -64,6 +66,7 @@ public class FragmentHome extends Fragment {
 
         // Setting interface interactions
         iRecyclerView.setAdapter(mAdapter);
+        //iProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
         // Activity methods
         getLedgers();
@@ -81,8 +84,8 @@ public class FragmentHome extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             mProgressDialog =  new ProgressDialog(getActivity());
-            mProgressDialog.setMessage("Fetching user ledger operations");
-            mProgressDialog.setCancelable(Boolean.FALSE);
+            mProgressDialog.setMessage(getResources().getString(R.string.fetching_ledger));
+            mProgressDialog.setCancelable(Boolean.TRUE);
             mProgressDialog.show();
         }
 
@@ -130,6 +133,7 @@ public class FragmentHome extends Fragment {
             if(mProgressDialog.isShowing()){
                 mProgressDialog.dismiss();
             }
+
 
             // Update List
             mAdapter.notifyDataSetChanged();

@@ -19,7 +19,7 @@
         android:id="@+id/balanceRightPanelView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
+        android:layout_gravity="end"
         android:fitsSystemWindows="true">
 
         <LinearLayout
