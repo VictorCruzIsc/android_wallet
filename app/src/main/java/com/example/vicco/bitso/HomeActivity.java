@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -39,7 +41,7 @@ import models.CompoundBalanceElement;
 
 import Utils.Utils;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener{
     private final String TAG = HomeActivity.class.getSimpleName();
 
     private List<CompoundBalanceElement> mBalanceListElements;
@@ -85,6 +87,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         // Interface and interactions
         {
             iBalancesList.setAdapter(mAdapter);
+            iBalancesList.setOnItemClickListener(this);
             iProfileLinearLayout.setOnClickListener(this);
             iConfigurationsLinearLayout.setOnClickListener(this);
         }
@@ -141,10 +144,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if(position != 0){
+            CompoundBalanceElement element = mBalanceListElements.get(position);
+            Toast.makeText(getBaseContext(),
+                    "Click on element " + element.getCurrency() + " color: " +
+                    element.getColor(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
     // Inner classes
     private class GetCompoundBalance extends AsyncTask<Void, Void, Void> {
         private List<CompoundBalanceElement> balanceListElements;
-
+        private boolean validAPILevel = Boolean.FALSE;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -208,10 +222,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     BigDecimal total = balance.mxnAvailable;
                     BigDecimal mxnAmount =  total;
                     mxnAmount = mxnAmount.setScale(4, RoundingMode.DOWN);
+
                     balanceListElements.add(
                             new CompoundBalanceElement(
                                     getResources().getString(R.string.mxn_balance),
-                                    mxnAmount, R.drawable.balance_divider_mxn));
+                                    mxnAmount, R.drawable.balance_divider_mxn,
+                                    R.color.balance_mxn));
 
                     for(int i=0; i<totalCurrencyTickers; i++){
                         BitsoTicker currentTicker =  tickers[i];
@@ -219,16 +235,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         String header = "";
                         BigDecimal currencyAmount = null;
                         int drawableElement = -1;
+                        int color = -1;
                         switch(currentTicker.book){
                             case BTC_MXN:
                                 currencyAmount = balance.btcAvailable;
                                 header = getResources().getString(R.string.btc_balance);
                                 drawableElement = R.drawable.balance_divider_btc;
+                                color = R.color.balance_btc;
                                 break;
                             case ETH_MXN:
                                 currencyAmount = balance.ethAvailable;
                                 header = getResources().getString(R.string.eth_balance);
                                 drawableElement = R.drawable.balance_divider_eth;
+                                color = R.color.balance_eth;
                                 break;
                             default:
                                 break;
@@ -241,11 +260,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         total = total.setScale(2, RoundingMode.DOWN);
 
                         balanceListElements.add(new CompoundBalanceElement(
-                                header, currencyAmount, drawableElement));
+                                header, currencyAmount, drawableElement, color));
                     }
 
                     balanceListElements.add(0, new CompoundBalanceElement(
-                            getResources().getString(R.string.hdr_balances), total, -1));
+                            getResources().getString(R.string.hdr_balances), total, -1, R.color.balance_amount));
 
                     mAdapter.processList(balanceListElements);
 

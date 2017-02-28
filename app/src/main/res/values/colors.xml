@@ -10,4 +10,7 @@
     <color name="balance_currency">#73838C</color>
     <color name="balance_amount">#EFF2F4</color>
     <color name="balance_slidebar_background">#313A46</color>
+    <color name="balance_mxn">#7EBB42</color>
+    <color name="balance_btc">#BB3E3F</color>
+    <color name="balance_eth">#6DA1CC</color>
 </resources>
