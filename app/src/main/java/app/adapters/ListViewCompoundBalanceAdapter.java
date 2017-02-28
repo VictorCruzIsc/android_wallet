@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.vicco.bitso.R;
@@ -73,7 +74,6 @@ public class ListViewCompoundBalanceAdapter extends BaseAdapter{
     public View getView(int position, View view, ViewGroup viewGroup) {
         ViewHolder holder = null;
         int rowType = getItemViewType(position);
-        String amount = "";
         if(view == null){
             holder = new ViewHolder();
             switch (rowType){
@@ -81,11 +81,13 @@ public class ListViewCompoundBalanceAdapter extends BaseAdapter{
                     view = mLayoutInflater.inflate(R.layout.lv_header_balance, null);
                     holder.mCurrency = (TextView) view.findViewById(R.id.currency_header);
                     holder.mTotal = (TextView) view.findViewById(R.id.amount_header);
+                    holder.mDivider = null;
                     break;
                 case TYPE_ITEM:
                     view = mLayoutInflater.inflate(R.layout.lv_element_balance, null);
                     holder.mCurrency = (TextView) view.findViewById(R.id.currency);
                     holder.mTotal = (TextView) view.findViewById(R.id.amount);
+                    holder.mDivider = (ImageView) view.findViewById(R.id.divider);
                     break;
             }
             view.setTag(holder);
@@ -94,9 +96,12 @@ public class ListViewCompoundBalanceAdapter extends BaseAdapter{
         }
 
         CompoundBalanceElement element = (CompoundBalanceElement) getItem(position);
-        amount = element.getTotal().toString();
+        String amount = element.getTotal().toString();
+
         if(rowType == TYPE_HEADER){
             amount = "$" + amount + " MXN";
+        }else{
+            holder.mDivider.setImageResource(element.getDivider());
         }
 
         holder.mCurrency.setText(element.getCurrency());
@@ -121,12 +126,14 @@ public class ListViewCompoundBalanceAdapter extends BaseAdapter{
     public class ViewHolder{
         TextView mCurrency;
         TextView mTotal;
+        ImageView mDivider;
 
         public ViewHolder(){}
 
-        public ViewHolder(TextView currency, TextView total) {
+        public ViewHolder(TextView currency, TextView total, ImageView imageView) {
             mCurrency = currency;
             mTotal = total;
+            mDivider = imageView;
         }
 
         public TextView getCurrency() {
@@ -136,5 +143,7 @@ public class ListViewCompoundBalanceAdapter extends BaseAdapter{
         public TextView getTotal() {
             return mTotal;
         }
+
+        public ImageView getDivider() {return mDivider; }
     }
 }

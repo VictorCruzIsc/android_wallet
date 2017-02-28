@@ -9,10 +9,12 @@ import java.math.BigDecimal;
 public class CompoundBalanceElement{
     private String mCurrency;
     private BigDecimal mTotal;
+    private int mDivider;
 
-    public CompoundBalanceElement(String currency, BigDecimal total){
+    public CompoundBalanceElement(String currency, BigDecimal total, int divider){
         mCurrency = currency;
         mTotal = total;
+        mDivider = divider;
     }
 
     public String getCurrency() {
@@ -22,4 +24,6 @@ public class CompoundBalanceElement{
     public BigDecimal getTotal() {
         return mTotal;
     }
+
+    public int getDivider(){ return mDivider; }
 }

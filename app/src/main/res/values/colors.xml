@@ -6,4 +6,8 @@
     <color name="windowBackground">#FFFFFF</color>
     <color name="navigationBarColor">#000000</color>
     <color name="colorAccent">#c8e8ff</color>
+
+    <color name="balance_currency">#73838C</color>
+    <color name="balance_amount">#EFF2F4</color>
+    <color name="balance_slidebar_background">#313A46</color>
 </resources>

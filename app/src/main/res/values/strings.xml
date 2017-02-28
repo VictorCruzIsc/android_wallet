@@ -22,6 +22,9 @@
     <string name="eth_balance">Ether (ETH)</string>
     <string name="profile_lbl">Perfil</string>
     <string name="configurations_lbl">Configuracion</string>
+    <string name="click_profile">Click en Perfil</string>
+    <string name="click_configurations">Click en configuraciones</string>
+    <string name="hdr_balances">Total en Pesos</string>
 
     <!-- Main Activity -->
     <string name="main_scan_qr">Leer codigo QR</string>

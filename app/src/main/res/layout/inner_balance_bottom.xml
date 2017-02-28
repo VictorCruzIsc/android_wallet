@@ -1,72 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <!-- <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/f_chat_identifier_text"
-        style="@style/BalanceBalanceAmount"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/f_chat_identifier_text"
-        style="@style/BalanceBalanceAmount"/>
-
-    <Button
-        android:text="Button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/addButton"/> -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/balance_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
-        android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
         android:layout_marginRight="15dp"
-        android:id="@+id/balance_profile">
+        android:layout_marginTop="15dp"
+        android:gravity="right"
+        android:orientation="horizontal">
 
         <TextView
-            android:text="@string/profile_lbl"
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="20dp"/>
+            android:layout_marginRight="20dp"
+            android:text="@string/profile_lbl"
+            style="@style/BalanceLetters"/>
+
         <ImageView
+            android:id="@+id/imageView"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            app:srcCompat="@drawable/profile"
-            android:id="@+id/imageView"/>
+            app:srcCompat="@drawable/profile"/>
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/balance_configuration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
-        android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
         android:layout_marginRight="15dp"
-        android:id="@+id/balance_configuration">
+        android:layout_marginTop="15dp"
+        android:gravity="right"
+        android:orientation="horizontal">
+
         <TextView
-            android:text="@string/configurations_lbl"
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView2"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="20dp"/>
+            android:layout_marginRight="20dp"
+            android:text="@string/configurations_lbl"
+            style="@style/BalanceLetters"/>
+
         <ImageView
+            android:id="@+id/imageView2"
             android:layout_width="30dp"
             android:layout_height="30dp"
             app:srcCompat="@drawable/gear"
-            android:id="@+id/imageView2"
             />
     </LinearLayout>
 </LinearLayout>

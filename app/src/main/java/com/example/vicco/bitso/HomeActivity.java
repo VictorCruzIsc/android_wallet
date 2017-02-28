@@ -1,6 +1,5 @@
 package com.example.vicco.bitso;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,21 +16,16 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-
-import app.activities.CaptureActivity;
 import app.adapters.ListViewCompoundBalanceAdapter;
 import app.adapters.ViewPagerAdapter;
 import app.fragments.FragmentCard;
@@ -48,10 +42,7 @@ import Utils.Utils;
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
     private final String TAG = HomeActivity.class.getSimpleName();
 
-    private Context mContext;
     private List<CompoundBalanceElement> mBalanceListElements;
-    private Intent mIntent;
-    private SharedPreferences mSharedPreferences;
     ListViewCompoundBalanceAdapter mAdapter;
 
     private Toolbar iToolbar;
@@ -61,7 +52,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private ListView iBalancesList;
     private LinearLayout iProfileLinearLayout;
     private LinearLayout iConfigurationsLinearLayout;
-    //private Button iButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +60,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         // Member elements
         {
-            mContext = getApplicationContext();
             mBalanceListElements =
                     new ArrayList<CompoundBalanceElement>();
             mAdapter = new ListViewCompoundBalanceAdapter(
@@ -91,12 +80,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             iBalancesList = (ListView) findViewById(R.id.balanceList);
             iProfileLinearLayout = (LinearLayout) findViewById(R.id.balance_profile);
             iConfigurationsLinearLayout = (LinearLayout) findViewById(R.id.balance_configuration);
-            //iButton = (Button) findViewById(R.id.addButton);
         }
 
         // Interface and interactions
         {
-            //iButton.setOnClickListener(this);
             iBalancesList.setAdapter(mAdapter);
             iProfileLinearLayout.setOnClickListener(this);
             iConfigurationsLinearLayout.setOnClickListener(this);
@@ -119,10 +106,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d(TAG, getResources().getString(R.string.no_internet_connection));
                 }
 
-                if (iBalanceDrawer.isDrawerOpen(GravityCompat.END)) {
-                    iBalanceDrawer.closeDrawer(GravityCompat.END);
+                if (iBalanceDrawer.isDrawerOpen(GravityCompat.START)) {
+                    iBalanceDrawer.closeDrawer(GravityCompat.START);
                 } else {
-                    iBalanceDrawer.openDrawer(GravityCompat.END);
+                    iBalanceDrawer.openDrawer(GravityCompat.START);
                 }
 
                 return Boolean.TRUE;
@@ -143,20 +130,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch(v.getId()){
-            /*
-            case R.id.addButton:
-                Log.d(TAG, "Click on add Button");
-                CompoundBalanceElement total =
-                        new CompoundBalanceElement("SX", new BigDecimal(String.valueOf(1900)));
-                mBalanceListElements.add(total);
-                mAdapter.notifyDataSetChanged();
-                break;
-            */
             case R.id.balance_profile:
-                Toast.makeText(this, "Click on profile", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getResources().getString(R.string.click_profile),
+                        Toast.LENGTH_LONG).show();
                 break;
             case R.id.balance_configuration:
-                Toast.makeText(this, "Click on configuration", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getResources().getString(R.string.click_configurations),
+                        Toast.LENGTH_LONG).show();
                 break;
         }
     }
@@ -170,16 +150,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             super.onPreExecute();
             HttpHandler.initHttpHandler(HomeActivity.this);
             balanceListElements = new ArrayList<CompoundBalanceElement>();
-            /*
-            mProgressDialog =  new ProgressDialog(getActivity());
-            mProgressDialog.setMessage("Fetching user ledger operations");
-            mProgressDialog.setCancelable(Boolean.FALSE);
-            mProgressDialog.show();
-            */
         }
 
         @Override
-        //new FillListAsyncTask().execute("/api/v3/ledger", "GET", "");
         protected Void doInBackground(Void... strings) {
             // Get balance
             String balanceResponse = HttpHandler.makeServiceCall("/api/v3/balance/",
@@ -198,13 +171,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            // Dismiss progress dialog
-            /*
-            if(mProgressDialog.isShowing()){
-                mProgressDialog.dismiss();
-            }
-            */
-
             // Update List
             mAdapter.notifyDataSetChanged();
         }
@@ -245,21 +211,24 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     balanceListElements.add(
                             new CompoundBalanceElement(
                                     getResources().getString(R.string.mxn_balance),
-                                    mxnAmount));
+                                    mxnAmount, R.drawable.balance_divider_mxn));
 
                     for(int i=0; i<totalCurrencyTickers; i++){
                         BitsoTicker currentTicker =  tickers[i];
                         BigDecimal currentLast = currentTicker.last;
                         String header = "";
                         BigDecimal currencyAmount = null;
+                        int drawableElement = -1;
                         switch(currentTicker.book){
                             case BTC_MXN:
                                 currencyAmount = balance.btcAvailable;
                                 header = getResources().getString(R.string.btc_balance);
+                                drawableElement = R.drawable.balance_divider_btc;
                                 break;
                             case ETH_MXN:
                                 currencyAmount = balance.ethAvailable;
                                 header = getResources().getString(R.string.eth_balance);
+                                drawableElement = R.drawable.balance_divider_eth;
                                 break;
                             default:
                                 break;
@@ -272,13 +241,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         total = total.setScale(2, RoundingMode.DOWN);
 
                         balanceListElements.add(new CompoundBalanceElement(
-                                header,
-                                currencyAmount));
+                                header, currencyAmount, drawableElement));
                     }
 
                     balanceListElements.add(0, new CompoundBalanceElement(
-                            getResources().getString(R.string.compound_balance),
-                            total));
+                            getResources().getString(R.string.hdr_balances), total, -1));
 
                     mAdapter.processList(balanceListElements);
 
