@@ -24,13 +24,33 @@
     </style>
 
     <style name="BalanceBackground">
-        <item name="android:background">@color/balance_slidebar_background</item>
+        <item name="android:background">@color/bitso_dark_blue</item>
     </style>
 
     <style name="BalanceLetters">
         <item name="android:textColor">@color/balance_amount</item>
         <item name="android:textSize">10dp</item>
         <item name="android:layout_marginLeft">10dp</item>
+    </style>
+
+    <!-- Toolbar -->
+    <style name="ToolbarButtonLetters">
+        <item name="android:textColor">@color/bitso_dark_blue</item>
+        <item name="android:textSize">10dp</item>
+    </style>
+
+    <style name="ToolbarTittleLetters">
+        <item name="android:textColor">@color/toolbar_title</item>
+        <item name="android:textSize">10dp</item>
+    </style>
+
+    <style name="ToolbarPesosLetters">
+        <item name="android:textColor">@color/bitso_green</item>
+        <item name="android:textSize">10dp</item>
+    </style>
+
+    <style name="ToolbarBalance">
+        <item name="android:textSize">30dp</item>
     </style>
 
 </resources>

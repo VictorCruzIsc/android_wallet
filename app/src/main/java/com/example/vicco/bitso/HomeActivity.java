@@ -270,7 +270,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                             new CompoundBalanceElement(
                                     getResources().getString(R.string.mxn_balance),
                                     mxnAmount, R.drawable.balance_divider_mxn,
-                                    R.color.balance_mxn));
+                                    R.color.bitso_green));
 
                     for(int i=0; i<totalCurrencyTickers; i++){
                         BitsoTicker currentTicker =  tickers[i];

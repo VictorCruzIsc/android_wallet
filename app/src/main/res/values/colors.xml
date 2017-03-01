@@ -5,12 +5,17 @@
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="windowBackground">#FFFFFF</color>
     <color name="navigationBarColor">#000000</color>
-    <color name="colorAccent">#c8e8ff</color>
+    <color name="colorAccent">#C8e8FF</color>
 
     <color name="balance_currency">#73838C</color>
     <color name="balance_amount">#EFF2F4</color>
-    <color name="balance_slidebar_background">#313A46</color>
-    <color name="balance_mxn">#7EBB42</color>
     <color name="balance_btc">#BB3E3F</color>
     <color name="balance_eth">#6DA1CC</color>
+
+    <color name="toolbar">#F9F9F9</color>
+    <color name="toolbar_title">#999999</color>
+
+
+    <color name="bitso_green">#7EBB42</color>
+    <color name="bitso_dark_blue">#313A46</color>
 </resources>

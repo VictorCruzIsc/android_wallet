@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+    android:background="@color/toolbar">
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bitso_wallet"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        style="@style/ToolbarTittleLetters"/>
+
+    <TextView
+        android:id="@+id/toolbarCurrencyAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="$150,000.00"
+        android:gravity="center_horizontal"
+        style="@style/ToolbarBalance"/>
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/total_pesos"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        style="@style/ToolbarPesosLetters"/>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:background="@color/toolbar">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/toolbar">
+
+            <ImageView
+                android:id="@+id/fondear_btn"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                app:srcCompat="@drawable/fondear"
+                android:layout_gravity="center_horizontal"/>
+
+            <TextView
+                android:text="@string/fondear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/fondear_lbl"
+                android:gravity="center_horizontal"
+                style="@style/ToolbarButtonLetters"
+                android:layout_marginTop="5dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/toolbar">
+
+            <ImageView
+                android:id="@+id/enviar_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/enviar"
+                android:layout_gravity="center_horizontal"/>
+
+            <TextView
+                android:text="@string/enviar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/enviar_lbl"
+                android:gravity="center_horizontal"
+                style="@style/ToolbarButtonLetters"
+                android:layout_marginTop="5dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/toolbar">
+
+            <ImageView
+                android:id="@+id/conviert_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/convierte"
+                android:layout_gravity="center_horizontal"/>
+
+            <TextView
+                android:text="@string/convertir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/convertir_lbl"
+                android:gravity="center_horizontal"
+                style="@style/ToolbarButtonLetters"
+                android:layout_marginTop="5dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
