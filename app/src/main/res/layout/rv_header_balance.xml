@@ -6,7 +6,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/balance_color_divider"
+        android:src="@drawable/balance_divider_btc"
         android:id="@+id/divider"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"

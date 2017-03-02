@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -54,12 +55,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private CoordinatorLayout iCoordinatorLayout;
     private Toolbar iToolbar;
     private NavigationView iNavigationView;
-    private TabLayout iTabLayout;
-    private ViewPager iViewPager;
+    //private TabLayout iTabLayout;
+    //private ViewPager iViewPager;
     private DrawerLayout iBalanceDrawer;
     private ListView iBalancesList;
     private LinearLayout iProfileLinearLayout;
     private LinearLayout iConfigurationsLinearLayout;
+    private ImageView iDotsMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +76,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     (DrawerLayout) findViewById(R.id.balanceRightPanelDrawer);
             iToolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(iToolbar);
-            iViewPager = (ViewPager) findViewById(R.id.viewPager);
-            setupViewPager(iViewPager);
-            iTabLayout = (TabLayout) findViewById(R.id.tabs);
-            iTabLayout.setupWithViewPager(iViewPager);
+            //iViewPager = (ViewPager) findViewById(R.id.viewPager);
+            //setupViewPager(iViewPager);
+            //iTabLayout = (TabLayout) findViewById(R.id.tabs);
+            //iTabLayout.setupWithViewPager(iViewPager);
             iBalancesList = (ListView) findViewById(R.id.balanceList);
             iProfileLinearLayout = (LinearLayout) findViewById(R.id.balance_profile);
             iConfigurationsLinearLayout = (LinearLayout) findViewById(R.id.balance_configuration);
+            iDotsMenu = (ImageView) findViewById(R.id.dots_icon);
         }
 
         // Member elements
@@ -100,14 +103,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             iProfileLinearLayout.setOnClickListener(this);
             iConfigurationsLinearLayout.setOnClickListener(this);
             iBalanceDrawer.setDrawerListener(mActionBarDrawerToggle);
+            iDotsMenu.setOnClickListener(this);
         }
     }
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+    //*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -141,6 +147,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.balance_configuration:
                 Toast.makeText(this, getResources().getString(R.string.click_configurations),
                         Toast.LENGTH_LONG).show();
+                break;
+            case R.id.dots_icon:
+                if(Utils.isNetworkAvailable(this)) {
+                    new GetCompoundBalance().execute();
+                }else{
+                    Log.d(TAG, getResources().getString(R.string.no_internet_connection));
+                }
+
+                if (iBalanceDrawer.isDrawerOpen(GravityCompat.END)) {
+                    iBalanceDrawer.closeDrawer(GravityCompat.END);
+                } else {
+                    iBalanceDrawer.openDrawer(GravityCompat.END);
+                }
                 break;
         }
     }
