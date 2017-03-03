@@ -24,7 +24,7 @@ import java.util.List;
 
 import app.adapters.RecyclerViewLedgerAdapater;
 import connectivity.HttpHandler;
-import models.BitsoOperation;
+//import models.BitsoOperation;
 
 /**
  * Created by vicco on 2/02/17.
@@ -33,7 +33,7 @@ import models.BitsoOperation;
 public class FragmentHome extends Fragment {
     public final String TAG = FragmentHome.class.getSimpleName();
 
-    public static List<BitsoOperation> slistElements;
+    //public static List<BitsoOperation> slistElements;
 
     public ProgressDialog mProgressDialog;
     public RecyclerViewLedgerAdapater mAdapter;
@@ -53,8 +53,8 @@ public class FragmentHome extends Fragment {
         // Members initialization
         mActivity = this.getActivity();
 
-        slistElements = new ArrayList<BitsoOperation>();
-        mAdapter = new RecyclerViewLedgerAdapater(slistElements);
+        //slistElements = new ArrayList<BitsoOperation>();
+        //mAdapter = new RecyclerViewLedgerAdapater(slistElements);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class FragmentHome extends Fragment {
                     JSONArray jsonArray = jsonObject.getJSONArray("payload");
                     int totalElements =  jsonArray.length();
                     for(int i=0; i<totalElements; i++){
-                        slistElements.add(new BitsoOperation(jsonArray.getJSONObject(i)));
+                       //slistElements.add(new BitsoOperation(jsonArray.getJSONObject(i)));
                     }
                 } catch (final JSONException e) {
                     Log.e(TAG, "JSON Object parsing error: " + e.getMessage());

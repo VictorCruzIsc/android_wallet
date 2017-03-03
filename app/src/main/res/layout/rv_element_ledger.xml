@@ -1,40 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginTop="11dp"
+    android:layout_marginBottom="11dp"
+    android:layout_marginLeft="30dp"
+    android:layout_marginRight="30dp">
 
     <ImageView
+        android:id="@+id/ledgerOperationIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/ic_launcher"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:id="@+id/operationIcon"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:src="@drawable/fondear"
+        android:layout_marginRight="14dp"/>
 
-    <TextView
-        android:text="Operation"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
-        android:layout_marginStart="40dp"
-        android:id="@+id/operation"
-        android:layout_alignTop="@+id/operationIcon"
-        android:layout_toRightOf="@+id/operationIcon"
-        android:layout_toEndOf="@+id/operationIcon"
-        android:textColor="@color/colorPrimaryDark" />
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:weightSum="2">
 
-    <TextView
-        android:text="15-06-93"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/operationDate"
-        android:textColor="@color/colorPrimaryDark"
-        android:layout_alignBottom="@+id/operationIcon"
-        android:layout_alignLeft="@+id/operation"
-        android:layout_alignStart="@+id/operation" />
-</RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/ledgerOperationDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Descripcion"
+                android:textColor="@color/ledger_desc"/>
+
+            <TextView
+                android:id="@+id/ledgerOperationCurrencyAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5000 BTC"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/ledgerOperationTimestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Fecha/Hora"
+                android:textColor="@color/ledger_timestamp"/>
+
+            <TextView
+                android:id="@+id/ledgerOperationStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

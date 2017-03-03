@@ -132,7 +132,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             String userId = UtilsSharedPreferences.readString(SP_CLIENT);
             userId = Utils.decryptString(ALIAS_CLIENT, userId);
             iContinueToActivityTV.setText(
-                    getResources().getString(R.string.main_continue) + userId);
+                    getResources().getString(R.string.main_continue) + " " + userId);
             iContinueToActivityTV.setOnClickListener(this);
         }else{
             iContinueToActivityTV.setVisibility(View.INVISIBLE);

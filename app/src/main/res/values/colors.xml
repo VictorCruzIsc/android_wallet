@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="bitso_green">#68B915</color>
+    <color name="bitso_dark_blue">#313A46</color>
+    <color name="bitso_gray">#4D4D4D</color>
+    <color name="bitso_red">#BB3E3F</color>
+
     <color name="colorPrimary">#125688</color>
     <color name="colorPrimaryDark">#125688</color>
     <color name="textColorPrimary">#FFFFFF</color>
@@ -12,10 +17,16 @@
     <color name="balance_btc">#BB3E3F</color>
     <color name="balance_eth">#6DA1CC</color>
 
-    <color name="toolbar">#F9F9F9</color>
-    <color name="toolbar_title">#999999</color>
+    <color name="toolbar">#F1F1F1</color>
 
+    <!-- Toolbar colors -->
+    <color name="toolbar_title">@color/bitso_gray</color>
 
-    <color name="bitso_green">#7EBB42</color>
-    <color name="bitso_dark_blue">#313A46</color>
+    <!-- List ledger colors -->
+    <color name="ledger_desc">@color/bitso_gray</color>
+    <color name="ledger_timestamp">#CCCCCC</color>
+    <color name="ledger_amount_funding">#666666</color>
+    <color name="ledger_amount_withdrawal">@color/bitso_red</color>
+    <color name="ledger_status_ok">#999999</color>
+    <color name="ledger_status_pending">@color/bitso_red</color>
 </resources>

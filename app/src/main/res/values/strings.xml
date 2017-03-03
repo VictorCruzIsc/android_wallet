@@ -35,7 +35,7 @@
 
     <!-- Main Activity -->
     <string name="main_scan_qr">Leer codigo QR</string>
-    <string name="main_continue">Continuar como </string>
+    <string name="main_continue">Continuar como</string>
 
     <!-- Errors -->
     <string name="no_internet_connection">El dispositivo no tiene conexion a internet, porfavor conectate y vuelve a intentarlo</string>

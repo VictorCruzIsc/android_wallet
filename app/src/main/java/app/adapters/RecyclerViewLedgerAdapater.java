@@ -1,7 +1,5 @@
 package app.adapters;
 
-import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,20 +7,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bitso.BitsoOperation;
 import com.example.vicco.bitso.R;
 
 import java.util.List;
 
-import models.BitsoOperation;
+import models.AppBitsoOperation;
 
 /**
  * Created by vicco on 3/02/17.
  */
 
 public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerViewLedgerAdapater.ViewHolder>{
-    private final List<BitsoOperation> mObjects;
+    private final List<AppBitsoOperation> mObjects;
 
-    public RecyclerViewLedgerAdapater(List<BitsoOperation> objects) {
+    public RecyclerViewLedgerAdapater(List<AppBitsoOperation> objects) {
         this.mObjects = objects;
     }
 
@@ -35,9 +34,14 @@ public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.mBitsoOperation = mObjects.get(position);
-        holder.mOperatinDate.setText(holder.mBitsoOperation.operationDate);
-        holder.mOperation.setText(holder.mBitsoOperation.operationDescription);
+        AppBitsoOperation appBitsoOperation = mObjects.get(position);
+        holder.setOperationIconValue(appBitsoOperation.getOperationImage());
+        holder.setAppBitsoOperation(appBitsoOperation);
+        holder.setOperationIconValue(appBitsoOperation.getOperationImage());
+        holder.setOperationValue(appBitsoOperation.getOperationDescription());
+        holder.setAmountValue(appBitsoOperation.getAmount());
+        holder.setTimestampValue(appBitsoOperation.getOperationDate());
+        holder.setStatusValue(appBitsoOperation.getStatus());
 
         /*holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,18 +60,78 @@ public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerVie
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        public final View mView;
-        public final ImageView mOperationIcon;
-        public final TextView mOperation;
-        public final TextView mOperatinDate;
-        public BitsoOperation mBitsoOperation;
+        private View mView;
+        private ImageView mOperationIcon;
+        private TextView mOperation;
+        private TextView mAmount;
+        private TextView mTimestamp;
+        private TextView mStatus;
+        private AppBitsoOperation mAppBitsoOperation;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            mOperationIcon = (ImageView) mView.findViewById(R.id.operationIcon);
-            mOperation = (TextView) mView.findViewById(R.id.operation);
-            mOperatinDate = (TextView) mView.findViewById(R.id.operationDate);
+            mOperationIcon = (ImageView) mView.findViewById(R.id.ledgerOperationIcon);
+            mOperation = (TextView) mView.findViewById(R.id.ledgerOperationDescription);
+            mAmount = (TextView) mView.findViewById(R.id.ledgerOperationCurrencyAmount);
+            mTimestamp = (TextView) mView.findViewById(R.id.ledgerOperationTimestamp);
+            mStatus = (TextView) mView.findViewById(R.id.ledgerOperationStatus);
+        }
+
+        public View getView() {
+            return mView;
+        }
+
+        public ImageView getOperationIcon() {
+            return mOperationIcon;
+        }
+
+        public TextView getOperation() {
+            return mOperation;
+        }
+
+        public TextView getAmount() {
+            return mAmount;
+        }
+
+        public TextView getTimestamp() {
+            return mTimestamp;
+        }
+
+        public TextView getStatus() {
+            return mStatus;
+        }
+
+        public AppBitsoOperation getAppBitsoOperation() {
+            return mAppBitsoOperation;
+        }
+
+        public void setView(View mView) {
+            this.mView = mView;
+        }
+
+        public void setOperationIconValue(int imageId) {
+            this.mOperationIcon.setImageResource(imageId);
+        }
+
+        public void setOperationValue(String operation) {
+            this.mOperation.setText(operation);
+        }
+
+        public void setAmountValue(String amount) {
+            this.mAmount.setText(amount);
+        }
+
+        public void setTimestampValue(String timestamp) {
+            this.mTimestamp.setText(timestamp);
+        }
+
+        public void setStatusValue(String status) {
+            this.mStatus.setText(status);
+        }
+
+        public void setAppBitsoOperation(AppBitsoOperation mAppBitsoOperation) {
+            this.mAppBitsoOperation = mAppBitsoOperation;
         }
     }
 }
