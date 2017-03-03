@@ -69,8 +69,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayout iConfigurationsLinearLayout;
     private ImageView iDotsMenu;
     private RecyclerView iRecyclerView;
-    private TextView iToolBarCurrencyAmount;//toolbarCurrencyAmount
-    private TextView iToolbarCurrencyAmountLbl;//
+    private TextView iToolBarCurrencyAmount;
+    private TextView iToolbarCurrencyAmountLbl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,8 +180,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         CompoundBalanceElement element = mBalanceListElements.get(position);
         iToolBarCurrencyAmount.setText("$" + element.getTotal().toString());
         iToolBarCurrencyAmount.setTextColor(element.getColor());
-
-        iToolbarCurrencyAmountLbl.setText(element.getCurrency());
+        iToolbarCurrencyAmountLbl.setText("TOTAL EN " + element.getCurrency().toUpperCase());
 
         if (iBalanceDrawer.isDrawerOpen(GravityCompat.END)) {
             iBalanceDrawer.closeDrawer(GravityCompat.END);
@@ -306,7 +305,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                             new CompoundBalanceElement(
                                     getResources().getString(R.string.mxn_balance),
                                     mxnAmount, R.drawable.balance_divider_mxn,
-                                    R.color.bitso_green));
+                                    R.color.balance_mxn));
 
                     for (int i = 0; i < totalCurrencyTickers; i++) {
                         BitsoTicker currentTicker = tickers[i];
@@ -439,6 +438,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 try {
                     JSONArray jsonArray = jsonObject.getJSONArray("payload");
                     int totalElements = jsonArray.length();
+                    Log.d(TAG, "Total elements in payload:" + totalElements);
                     for (int i = 0; i < totalElements; i++) {
                         slistElements.add(new AppBitsoOperation(jsonArray.getJSONObject(i)));
                     }
@@ -466,11 +466,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 try {
                     // Process balance
                     JSONObject jsonBalance = new JSONObject(stringBalance);
-                    balance = new BitsoBalance(jsonBalance);
+                    if(jsonBalance.getString("success").equals("true")) {
+                        balance = new BitsoBalance(jsonBalance);
+                    }
 
                     // ProcessTicker
                     JSONObject jsonTicker = new JSONObject(stringTicker);
-                    if (jsonTicker.has("success") && jsonTicker.has("payload")) {
+                    if (jsonTicker.getString("success").equals("true")) {
                         JSONArray currencyTickers = jsonTicker.getJSONArray("payload");
                         totalCurrencyTickers = currencyTickers.length();
                         tickers = new BitsoTicker[totalCurrencyTickers];
@@ -532,7 +534,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     }
 
                     balanceListElements.add(0, new CompoundBalanceElement(
-                            getResources().getString(R.string.hdr_balances), total, -1, R.color.balance_amount));
+                            getResources().getString(R.string.hdr_balances), total, -1,
+                            R.color.balance_amount));
 
                     mListViewCompoundBalanceAdapter.processList(balanceListElements);
 

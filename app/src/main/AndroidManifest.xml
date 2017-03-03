@@ -10,12 +10,17 @@
         android:supportsRtl="true"
         android:theme="@style/BitsoTheme">
 
-        <activity android:name="app.activities.CaptureActivity"
-            android:screenOrientation="portrait">
+        <activity android:name="app.activities.SplashActivity"
+                  android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity android:name="app.activities.CaptureActivity"
+            android:screenOrientation="portrait">
         </activity>
 
         <!--
@@ -38,5 +43,8 @@
             android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="94ec3f2b55bc3a9eeb9e7e367836100d243af9e7" />
     </application>
 </manifest>

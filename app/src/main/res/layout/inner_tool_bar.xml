@@ -132,11 +132,12 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!--
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/shade"
             android:orientation="vertical">
-        </LinearLayout>
+        </LinearLayout> -->
     </LinearLayout>
 </FrameLayout>

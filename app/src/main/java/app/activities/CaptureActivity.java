@@ -12,20 +12,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.vicco.bitso.HomeActivity;
 import com.example.vicco.bitso.R;
-
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
+import io.fabric.sdk.android.Fabric;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-
 import Utils.Utils;
 import Utils.UtilsSharedPreferences;
 import connectivity.HttpHandler;
+
 
 /**
  * Created by vicco on 20/02/17.
@@ -54,6 +52,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_zxing_capture);
 
         // Members
@@ -85,13 +84,11 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 mIntegrator.initiateScan();
                 break;
             case R.id.continueToActivityTV:
-                /*
                 if(!Utils.isNetworkAvailable(this)){
                     Toast.makeText(this, getResources().getString(
                             R.string.no_internet_connection), Toast.LENGTH_LONG).show();
                     return;
                 }
-                */
 
                 Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
@@ -135,7 +132,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                     getResources().getString(R.string.main_continue) + " " + userId);
             iContinueToActivityTV.setOnClickListener(this);
         }else{
-            iContinueToActivityTV.setVisibility(View.INVISIBLE);
+            iContinueToActivityTV.setText(getResources().getString(R.string.qr_link));
         }
     }
 
@@ -154,6 +151,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             HttpHandler httpHandler = new HttpHandler();
             String parameters = "token=" + params[0] + "&appname=Android";
             String credentialsResponse = httpHandler.sendPost(parameters);
+            Log.d(TAG, "================" + credentialsResponse + "==================================");
             return setUpCredentials(credentialsResponse);
         }
 

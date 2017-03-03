@@ -16,8 +16,10 @@
     <color name="balance_amount">#EFF2F4</color>
     <color name="balance_btc">#BB3E3F</color>
     <color name="balance_eth">#6DA1CC</color>
+    <color name="balance_mxn">@color/bitso_green</color>
 
-    <color name="toolbar">#F1F1F1</color>
+    <!--<color name="toolbar">#F1F1F1</color>-->
+    <color name="toolbar">#F6F6F6</color>
 
     <!-- Toolbar colors -->
     <color name="toolbar_title">@color/bitso_gray</color>

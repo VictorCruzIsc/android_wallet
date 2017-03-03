@@ -142,7 +142,7 @@ public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerVie
             int color = mContext.getResources().getColor(R.color.ledger_status_ok);
             try {
                 BigDecimal localStatus = new BigDecimal(status);
-                if(localStatus.intValue() < 0) {
+                if(localStatus.doubleValue() < 0) {
                     color = mContext.getResources().getColor(R.color.bitso_red);
                 }
             }catch(Exception e){
