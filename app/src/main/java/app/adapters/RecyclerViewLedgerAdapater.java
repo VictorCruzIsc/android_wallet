@@ -1,5 +1,6 @@
 package app.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import com.bitso.BitsoOperation;
 import com.example.vicco.bitso.R;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import models.AppBitsoOperation;
@@ -21,8 +23,11 @@ import models.AppBitsoOperation;
 public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerViewLedgerAdapater.ViewHolder>{
     private final List<AppBitsoOperation> mObjects;
 
-    public RecyclerViewLedgerAdapater(List<AppBitsoOperation> objects) {
-        this.mObjects = objects;
+    private Context mContext;
+
+    public RecyclerViewLedgerAdapater(List<AppBitsoOperation> objects, Context context) {
+        mObjects = objects;
+        mContext = context;
     }
 
     @Override
@@ -120,6 +125,12 @@ public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerVie
 
         public void setAmountValue(String amount) {
             this.mAmount.setText(amount);
+            BigDecimal localAmount = new BigDecimal(amount);
+            if(localAmount.intValue() < 0){
+                mAmount.setTextColor(mContext.getResources().getColor(R.color.bitso_red));
+            }else{
+                mAmount.setTextColor(mContext.getResources().getColor(R.color.ledger_amount_funding));
+            }
         }
 
         public void setTimestampValue(String timestamp) {
@@ -128,6 +139,15 @@ public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerVie
 
         public void setStatusValue(String status) {
             this.mStatus.setText(status);
+            int color = mContext.getResources().getColor(R.color.ledger_status_ok);
+            try {
+                BigDecimal localStatus = new BigDecimal(status);
+                if(localStatus.intValue() < 0) {
+                    color = mContext.getResources().getColor(R.color.bitso_red);
+                }
+            }catch(Exception e){
+            }
+            mStatus.setTextColor(color);
         }
 
         public void setAppBitsoOperation(AppBitsoOperation mAppBitsoOperation) {

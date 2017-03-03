@@ -42,7 +42,7 @@
             android:text="$150,000.00"/>
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/toolbarCurrencyAmountLbl"
             style="@style/ToolbarPesosLetters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

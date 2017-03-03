@@ -71,7 +71,7 @@ public class AppBitsoOperation extends BitsoOperation {
                     mStatus = "Deposito completado";
                     operationDescription = BitsoLedgerOperations.FUNDING.toString();
                     if(totalUpdates == 1){
-                        mAmount = balanceUpdates[0].amount.setScale(2,
+                        mAmount = balanceUpdates[0].amount.setScale(8,
                                 RoundingMode.DOWN).toString();
                         mCurrency = balanceUpdates[0].currency;
                     }
@@ -82,7 +82,7 @@ public class AppBitsoOperation extends BitsoOperation {
                     mStatus = "Retiro completado";
                     operationDescription = BitsoLedgerOperations.WITHDRAWAL.toString();
                     if(totalUpdates == 1){
-                        mAmount = balanceUpdates[0].amount.setScale(2,
+                        mAmount = balanceUpdates[0].amount.setScale(8,
                                 RoundingMode.DOWN).toString();
                         mCurrency = balanceUpdates[0].currency;
                     }
@@ -102,11 +102,11 @@ public class AppBitsoOperation extends BitsoOperation {
 
                         //atPrice = positiveAmount.divide(negativeAmount.abs());
 
-                        positiveAmount.setScale(2,RoundingMode.DOWN);
-                        negativeAmount.setScale(2,RoundingMode.DOWN);
+                        positiveAmount.setScale(8,RoundingMode.DOWN);
+                        negativeAmount.setScale(8,RoundingMode.DOWN);
                         //atPrice.setScale(2,RoundingMode.DOWN);
 
-                        operationDescription += "(@" + "atPrice.toString()" + ")";
+                        //operationDescription += "(@" + "atPrice.toString()" + ")";
                         mAmount = positiveAmount.toString();
                         mStatus = negativeAmount.toString();
                     }
@@ -117,7 +117,7 @@ public class AppBitsoOperation extends BitsoOperation {
                     operationDescription = BitsoLedgerOperations.FEE.toString();
                     mOperationImage = R.drawable.user_convert;
                     if(totalUpdates == 1){
-                        mAmount = balanceUpdates[0].amount.setScale(2,
+                        mAmount = balanceUpdates[0].amount.setScale(8,
                                 RoundingMode.DOWN).toString();
                         mCurrency = balanceUpdates[0].currency;
                     }
