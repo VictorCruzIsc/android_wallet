@@ -42,14 +42,18 @@ public class HttpHandler{
 
     public static boolean initHttpHandler(Context context) {
         if(!mInitialized){
-            UtilsSharedPreferences.initSharedPreferences(context);
-            if(UtilsSharedPreferences.readBoolean(CaptureActivity.SP_SET_KEYS)){
-                mBitsoAPI = UtilsSharedPreferences.readString(CaptureActivity.SP_API);
-                mBitsoSecret = UtilsSharedPreferences.readString(CaptureActivity.SP_SECRET);
+            if(UtilsSharedPreferences.readBoolean(CaptureActivity.SP_SET_KEYS,context)){
+                mBitsoAPI =
+                        UtilsSharedPreferences.readString(CaptureActivity.SP_API, context);
+                mBitsoSecret =
+                        UtilsSharedPreferences.readString(CaptureActivity.SP_SECRET, context);
+
                 if(!mBitsoAPI.equals(UtilsSharedPreferences.DEFAULT_STRING_VALUE) &&
                         !mBitsoSecret.equals(UtilsSharedPreferences.DEFAULT_STRING_VALUE)){
-                    mBitsoAPI = Utils.decryptString(CaptureActivity.ALIAS_API, mBitsoAPI);
-                    mBitsoSecret = Utils.decryptString(CaptureActivity.ALIAS_SECRET, mBitsoSecret);
+                    mBitsoAPI =
+                            Utils.decryptString(CaptureActivity.ALIAS_API, mBitsoAPI);
+                    mBitsoSecret =
+                            Utils.decryptString(CaptureActivity.ALIAS_SECRET, mBitsoSecret);
                     mInitialized = Boolean.TRUE;
                 }
             }

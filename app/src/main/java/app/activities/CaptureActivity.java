@@ -30,15 +30,15 @@ import connectivity.HttpHandler;
  */
 
 public class CaptureActivity extends AppCompatActivity implements View.OnClickListener{
+    private final String TAG = CaptureActivity.class.getSimpleName();
+
     public static final String ALIAS_SECRET = "secret";
     public static final String ALIAS_API = "api";
     public static final String ALIAS_CLIENT = "client";
+    public static final String SP_SET_KEYS = "setKeys";
     public static final String SP_SECRET = ALIAS_SECRET;
     public static final String SP_API = ALIAS_API;
     public static final String SP_CLIENT = ALIAS_CLIENT;
-    public static final String SP_SET_KEYS = "setKeys";
-
-    private final String TAG = CaptureActivity.class.getSimpleName();
 
     private IntentIntegrator mIntegrator;
     private ProgressDialog mProgressDialog;
@@ -84,6 +84,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 mIntegrator.initiateScan();
                 break;
             case R.id.continueToActivityTV:
+
                 if(!Utils.isNetworkAvailable(this)){
                     Toast.makeText(this, getResources().getString(
                             R.string.no_internet_connection), Toast.LENGTH_LONG).show();
@@ -99,14 +100,13 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-
         if(!Utils.isNetworkAvailable(this)){
             Toast.makeText(this, getResources().getString(
                     R.string.no_internet_connection), Toast.LENGTH_LONG).show();
             return;
         }
 
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
             if(result.getContents() == null) {
                 String message =  getResources().getString(R.string.cancelled_scan);
@@ -117,19 +117,14 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 token = token.substring(equalsIndex + 1);
                 new GetUserCredentials().execute(token);
             }
-        } else {
-            // If needed in a fragment activity
-            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
     private void checkUserAlreadyLogged(){
-        UtilsSharedPreferences.initSharedPreferences(this);
-        if(UtilsSharedPreferences.readBoolean(SP_SET_KEYS)){
-            String userId = UtilsSharedPreferences.readString(SP_CLIENT);
+        if(UtilsSharedPreferences.readBoolean(SP_SET_KEYS, this)){
+            String userId = UtilsSharedPreferences.readString(SP_CLIENT, this);
             userId = Utils.decryptString(ALIAS_CLIENT, userId);
-            iContinueToActivityTV.setText(
-                    getResources().getString(R.string.main_continue) + " " + userId);
+            iContinueToActivityTV.setText(getResources().getString(R.string.main_continue) + " " + userId);
             iContinueToActivityTV.setOnClickListener(this);
         }else{
             iContinueToActivityTV.setText(getResources().getString(R.string.qr_link));
@@ -140,29 +135,33 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressDialog = new ProgressDialog(CaptureActivity.this);
+            /*
+            mProgressDialog = new ProgressDialog(getApplicationContext());
             mProgressDialog.setMessage(getResources().getString(R.string.login));
             mProgressDialog.setCancelable(Boolean.TRUE);
             mProgressDialog.show();
+            */
         }
 
         @Override
         protected Boolean doInBackground(String... params) {
-            HttpHandler httpHandler = new HttpHandler();
             String parameters = "token=" + params[0] + "&appname=Android";
-            String credentialsResponse = httpHandler.sendPost(parameters);
-            Log.d(TAG, "================" + credentialsResponse + "==================================");
-            return setUpCredentials(credentialsResponse);
+            String credentialsResponse = HttpHandler.sendPost(parameters);
+            Log.d(TAG, "Credentials response: " + credentialsResponse);
+            return UtilsSharedPreferences.saveUserCredentials(credentialsResponse,
+                    CaptureActivity.this);
         }
 
         @Override
         protected void onPostExecute(Boolean response) {
             super.onPostExecute(response);
 
+            /*
             // Dismiss progress dialog
             if(mProgressDialog.isShowing()){
                 mProgressDialog.dismiss();
             }
+            */
 
             if(response){
                 HttpHandler.setInitialized(Boolean.FALSE);
@@ -173,63 +172,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                         getString(R.string.no_credencials_fetched);
                 Toast.makeText(CaptureActivity.this, message, Toast.LENGTH_LONG).show();
             }
-        }
-
-        private boolean setUpCredentials(String credentialsResponse){
-            // Create keys in KeyStore
-            Utils.createNewKey(ALIAS_SECRET, CaptureActivity.this);
-            Utils.createNewKey(ALIAS_API, CaptureActivity.this);
-            Utils.createNewKey(ALIAS_CLIENT, CaptureActivity.this);
-
-            try {
-                JSONObject jsonObject = new JSONObject(credentialsResponse);
-                if(!jsonObject.has("error")) {
-                    UtilsSharedPreferences.initSharedPreferences(CaptureActivity.this);
-                    Boolean credentialsSetup = saveCredentials(jsonObject);
-                    UtilsSharedPreferences.writeBoolean(SP_SET_KEYS, credentialsSetup);
-                    return credentialsSetup;
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return false;
-        }
-
-        private boolean saveCredentials(JSONObject jsonObject){
-            String secret = null;
-            String encryptedSecret =  null;
-            String api =  null;
-            String encryptedAPI = null;
-            String client =  null;
-            String encryptedClient = null;
-            try {
-                secret = jsonObject.getString(ALIAS_SECRET);
-                encryptedSecret = Utils.encryptString(ALIAS_SECRET, secret);
-                secret = "";
-                secret =  null;
-
-                api = jsonObject.getString("id");
-                encryptedAPI = Utils.encryptString(ALIAS_API, api);
-                api = "";
-                api = null;
-
-                client = jsonObject.getString(ALIAS_CLIENT);
-                encryptedClient = Utils.encryptString(ALIAS_CLIENT, client);
-                client = "";
-                client = null;
-
-                // Save on shared preferences
-                boolean savedSecret = UtilsSharedPreferences.writeString(SP_SECRET, encryptedSecret);
-                boolean savedAPI = UtilsSharedPreferences.writeString(SP_API, encryptedAPI);
-                boolean savedClient = UtilsSharedPreferences.writeString(SP_CLIENT, encryptedClient);
-
-                Log.d(TAG, "SECRET: " + encryptedSecret + " API: " + encryptedAPI + " CLIENT: " + encryptedClient);
-
-                return (savedSecret & savedAPI & savedClient);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return false;
         }
     }
 }
