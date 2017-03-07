@@ -42,6 +42,8 @@
     <string name="cancelled_scan">No fue posible obtener credenciales, intente de nuevo</string>
     <string name="no_credencials_fetched">No fue posible obtener credenciales, intente de nuevo</string>
     <string name="no_compound_balance">No fue posible calcular el balance compuesto</string>
+    <string name="no_ledgder_fetched">No fue posible obtener las operaciones de ledger</string>
+    <string name="no_valid_response">El json indica que hay un error</string>
 
     <!-- Instructions -->
     <string name="place_qr">Coloca QR para poder iniciar sesion</string>

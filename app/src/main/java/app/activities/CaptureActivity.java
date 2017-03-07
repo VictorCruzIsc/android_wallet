@@ -41,10 +41,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     public static final String SP_CLIENT = ALIAS_CLIENT;
 
     private IntentIntegrator mIntegrator;
-    private ProgressDialog mProgressDialog;
-    private String mSecret;
-    private String mId;
-    private int mClient;
 
     private Button iScanCredentialsBtn;
     private TextView iContinueToActivityTV;
@@ -131,38 +127,29 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    private boolean asyncMethodProcessCredentials(String... params){
+        String parameters = "token=" + params[0] + "&appname=Android";
+        String credentialsResponse = HttpHandler.sendPost(parameters);
+
+        Log.d(TAG, "Credentials response: " + credentialsResponse);
+
+        return UtilsSharedPreferences.saveUserCredentials(credentialsResponse, this);
+    }
+
     private class GetUserCredentials extends AsyncTask<String, Void, Boolean>{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            /*
-            mProgressDialog = new ProgressDialog(getApplicationContext());
-            mProgressDialog.setMessage(getResources().getString(R.string.login));
-            mProgressDialog.setCancelable(Boolean.TRUE);
-            mProgressDialog.show();
-            */
         }
 
         @Override
         protected Boolean doInBackground(String... params) {
-            String parameters = "token=" + params[0] + "&appname=Android";
-            String credentialsResponse = HttpHandler.sendPost(parameters);
-            Log.d(TAG, "Credentials response: " + credentialsResponse);
-            return UtilsSharedPreferences.saveUserCredentials(credentialsResponse,
-                    CaptureActivity.this);
+            return asyncMethodProcessCredentials(params);
         }
 
         @Override
         protected void onPostExecute(Boolean response) {
             super.onPostExecute(response);
-
-            /*
-            // Dismiss progress dialog
-            if(mProgressDialog.isShowing()){
-                mProgressDialog.dismiss();
-            }
-            */
-
             if(response){
                 HttpHandler.setInitialized(Boolean.FALSE);
                 Intent intent = new Intent(CaptureActivity.this, HomeActivity.class);
