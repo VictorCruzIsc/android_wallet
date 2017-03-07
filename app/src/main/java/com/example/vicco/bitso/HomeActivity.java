@@ -1,24 +1,17 @@
 package com.example.vicco.bitso;
 
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -39,13 +32,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import app.adapters.ListViewCompoundBalanceAdapter;
-import app.adapters.RecyclerViewCompoundBalanceAdapter;
 import app.adapters.RecyclerViewLedgerAdapater;
-import app.adapters.ViewPagerAdapter;
-import app.fragments.FragmentCard;
-import app.fragments.FragmentChat;
-import app.fragments.FragmentHome;
-import app.fragments.FragmentUserActivity;
 import connectivity.HttpHandler;
 import models.AppBitsoOperation;
 import models.BitsoBalance;
@@ -463,15 +450,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             if(result) {
-                // Update ledger Recycler View
-                mRecyclerViewLedgerAdapter.notifyDataSetChanged();
+                // Actions over ledger adapter
+                {
+                    // Order operations and group them by date
+                    mRecyclerViewLedgerAdapter.orderOperationsByDate();
+                    // Notify update ledger adapter
+                    mRecyclerViewLedgerAdapter.notifyDataSetChanged();
+                }
 
-                // Update compound balance ListView
-                mListViewCompoundBalanceAdapter.notifyDataSetChanged();
+                // Actions over balance adapter and toolbar TextView
+                {
+                    // Notify update compound balance adapter
+                    mListViewCompoundBalanceAdapter.notifyDataSetChanged();
 
-                // Update Balance in toolbar
-                TextView textView = (TextView) findViewById(R.id.toolbarCurrencyAmount);
-                textView.setText(mToolBarBalance);
+                    // Update Balance in toolbar
+                    TextView textView = (TextView) findViewById(R.id.toolbarCurrencyAmount);
+                    textView.setText(mToolBarBalance);
+                }
             }else{
                 Log.d(TAG, getString(R.string.no_ledgder_fetched));
             }

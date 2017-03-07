@@ -2,6 +2,8 @@ package app.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.BoringLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +11,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bitso.BitsoOperation;
+import com.example.vicco.bitso.HomeActivity;
 import com.example.vicco.bitso.R;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 
 import models.AppBitsoOperation;
@@ -21,34 +26,74 @@ import models.AppBitsoOperation;
  */
 
 public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerViewLedgerAdapater.ViewHolder>{
-    private final List<AppBitsoOperation> mObjects;
+    private final String TAG = RecyclerViewLedgerAdapater.class.getSimpleName();
 
+    private final int TYPE_ITEM = 0;
+    private final int TYPE_DATE = 1;
+    private final int TYPE_TRANSACTION = 2;
+
+    private HashMap<Integer, Integer> mElementTypes;
+    private List<AppBitsoOperation> mObjects;
     private Context mContext;
 
     public RecyclerViewLedgerAdapater(List<AppBitsoOperation> objects, Context context) {
+        mElementTypes = new HashMap<Integer, Integer>();
         mObjects = objects;
         mContext = context;
     }
 
+    public void addOperationElement(AppBitsoOperation appBitsoOperation){
+        mObjects.add(appBitsoOperation);
+    }
+
+    public void addDateElement(AppBitsoOperation appBitsoOperation){
+        addOperationElement(appBitsoOperation);
+        mElementTypes.put((mObjects.size() - 1), TYPE_DATE);
+    }
+
+    public void addTransactionElement(AppBitsoOperation appBitsoOperation){
+        addOperationElement(appBitsoOperation);
+        mElementTypes.put((mObjects.size() - 1), TYPE_TRANSACTION);
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.rv_element_ledger, parent, false);
+        View view = null;
+        switch (viewType){
+            case TYPE_DATE:
+            case TYPE_TRANSACTION:
+            case TYPE_ITEM:
+                view = LayoutInflater.from(parent.getContext()).inflate(
+                        R.layout.rv_element_ledger, parent, false);
+                break;
+        }
         return new ViewHolder(view);
+    }
+
+    public void orderOperationsByDate(){
+        Log.d(TAG, "Ordering information by date");
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         AppBitsoOperation appBitsoOperation = mObjects.get(position);
-        holder.setOperationIconValue(appBitsoOperation.getOperationImage());
-        holder.setAppBitsoOperation(appBitsoOperation);
-        holder.setOperationIconValue(appBitsoOperation.getOperationImage());
-        holder.setOperationValue(appBitsoOperation.getOperationDescription());
-        holder.setAmountValue(appBitsoOperation.getAmount());
-        holder.setTimestampValue(appBitsoOperation.getOperationDate());
-        holder.setStatusValue(appBitsoOperation.getStatus());
+        int rowType = getItemViewType(position);
+        switch (rowType){
+            case TYPE_DATE:
+            case TYPE_TRANSACTION:
+            case TYPE_ITEM:
+                holder.setOperationIconValue(appBitsoOperation.getOperationImage());
+                holder.setAppBitsoOperation(appBitsoOperation);
+                holder.setOperationIconValue(appBitsoOperation.getOperationImage());
+                holder.setOperationValue(appBitsoOperation.getOperationDescription());
+                holder.setAmountValue(appBitsoOperation.getAmount());
+                holder.setTimestampValue(appBitsoOperation.getOperationDate());
+                holder.setStatusValue(appBitsoOperation.getStatus());
+                break;
+        }
 
-        /*holder.mView.setOnClickListener(new View.OnClickListener() {
+        /*
+        holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Context context = view.getContext();
@@ -56,12 +101,21 @@ public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerVie
                 intent.putExtra(ItemDetailLedgerFragment.LEDGER_DETAIL_ITEM_ID, position);
                 context.startActivity(intent);
             }
-        });*/
+        });
+        */
     }
 
     @Override
     public int getItemCount() {
         return mObjects.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(mElementTypes.containsKey(position)) {
+            return mElementTypes.get(position);
+        }
+        return TYPE_ITEM;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
