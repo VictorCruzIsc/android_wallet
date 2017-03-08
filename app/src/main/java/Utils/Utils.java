@@ -2,7 +2,6 @@ package Utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.Network;
 import android.net.NetworkInfo;
 import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
@@ -22,10 +21,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
-import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -42,6 +42,8 @@ import Exceptions.BitsoException;
 public class Utils {
     private static final String TAG = "Utils";
     private static KeyStore mKeyStore;
+
+    public static String LEDGER_DATE_FORMAT = "hh:mm a";
 
     static{
         try {
@@ -222,5 +224,10 @@ public class Utils {
                         Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return (networkInfo!=null);
+    }
+
+    public static String formatDate(Date date, String format){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        return simpleDateFormat.format(date).toString();
     }
 }

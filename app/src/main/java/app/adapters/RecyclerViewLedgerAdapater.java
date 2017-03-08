@@ -2,7 +2,6 @@ package app.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.BoringLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,12 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bitso.BitsoOperation;
-import com.example.vicco.bitso.HomeActivity;
 import com.example.vicco.bitso.R;
-import com.google.zxing.integration.android.IntentResult;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
@@ -86,9 +81,10 @@ public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerVie
                 holder.setAppBitsoOperation(appBitsoOperation);
                 holder.setOperationIconValue(appBitsoOperation.getOperationImage());
                 holder.setOperationValue(appBitsoOperation.getOperationDescription());
-                holder.setAmountValue(appBitsoOperation.getAmount());
+                holder.setAmountValue(appBitsoOperation.getAmount(), appBitsoOperation.getAmountCurrencyColor());
+                holder.setCurrency(appBitsoOperation.getCurrency(), appBitsoOperation.getAmountCurrencyColor());
                 holder.setTimestampValue(appBitsoOperation.getOperationDate());
-                holder.setStatusValue(appBitsoOperation.getStatus());
+                holder.setStatusValue(appBitsoOperation.getStatus(), appBitsoOperation.getStatusColor());
                 break;
         }
 
@@ -123,6 +119,7 @@ public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerVie
         private ImageView mOperationIcon;
         private TextView mOperation;
         private TextView mAmount;
+        private TextView mCurrency;
         private TextView mTimestamp;
         private TextView mStatus;
         private AppBitsoOperation mAppBitsoOperation;
@@ -133,6 +130,7 @@ public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerVie
             mOperationIcon = (ImageView) mView.findViewById(R.id.ledgerOperationIcon);
             mOperation = (TextView) mView.findViewById(R.id.ledgerOperationDescription);
             mAmount = (TextView) mView.findViewById(R.id.ledgerOperationCurrencyAmount);
+            mCurrency = (TextView) mView.findViewById(R.id.ledgerCurrencyDescriptor);
             mTimestamp = (TextView) mView.findViewById(R.id.ledgerOperationTimestamp);
             mStatus = (TextView) mView.findViewById(R.id.ledgerOperationStatus);
         }
@@ -151,6 +149,10 @@ public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerVie
 
         public TextView getAmount() {
             return mAmount;
+        }
+
+        public TextView getCurrency() {
+            return mCurrency;
         }
 
         public TextView getTimestamp() {
@@ -177,31 +179,23 @@ public class RecyclerViewLedgerAdapater extends RecyclerView.Adapter<RecyclerVie
             this.mOperation.setText(operation);
         }
 
-        public void setAmountValue(String amount) {
+        public void setAmountValue(String amount, int color) {
             this.mAmount.setText(amount);
-            BigDecimal localAmount = new BigDecimal(amount);
-            if(localAmount.intValue() < 0){
-                mAmount.setTextColor(mContext.getResources().getColor(R.color.bitso_red));
-            }else{
-                mAmount.setTextColor(mContext.getResources().getColor(R.color.ledger_amount_funding));
-            }
+            mAmount.setTextColor(mContext.getResources().getColor(color));
+        }
+
+        public void setCurrency(String currency, int color){
+            this.mCurrency.setText(currency);
+            mCurrency.setTextColor(mContext.getResources().getColor(color));
         }
 
         public void setTimestampValue(String timestamp) {
             this.mTimestamp.setText(timestamp);
         }
 
-        public void setStatusValue(String status) {
+        public void setStatusValue(String status, int color) {
             this.mStatus.setText(status);
-            int color = mContext.getResources().getColor(R.color.ledger_status_ok);
-            try {
-                BigDecimal localStatus = new BigDecimal(status);
-                if(localStatus.doubleValue() < 0) {
-                    color = mContext.getResources().getColor(R.color.bitso_red);
-                }
-            }catch(Exception e){
-            }
-            mStatus.setTextColor(color);
+            mStatus.setTextColor(mContext.getResources().getColor(color));
         }
 
         public void setAppBitsoOperation(AppBitsoOperation mAppBitsoOperation) {

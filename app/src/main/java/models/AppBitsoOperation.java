@@ -9,7 +9,8 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Date;
+
+import Utils.Utils;
 
 /**
  * Created by vicco on 31/01/17.
@@ -20,6 +21,9 @@ public class AppBitsoOperation extends BitsoOperation {
     private String mAmount;
     private String mCurrency;
     private String mStatus;
+    private int mAmountCurrencyColor;
+    private int mStatusColor;
+
     private AppBalanceUpdate[] balanceUpdates;
 
     public AppBitsoOperation(JSONObject o){
@@ -43,6 +47,10 @@ public class AppBitsoOperation extends BitsoOperation {
         return mStatus;
     }
 
+    public int getAmountCurrencyColor() { return mAmountCurrencyColor; }
+
+    public int getStatusColor() { return mStatusColor; }
+
     public void setOperationImage(int mOperationImage) {
         this.mOperationImage = mOperationImage;
     }
@@ -52,7 +60,7 @@ public class AppBitsoOperation extends BitsoOperation {
     }
 
     public String getOperationDate(){
-        return operationDate.toString();
+        return Utils.formatDate(operationDate, Utils.LEDGER_DATE_FORMAT);
     }
 
     private void processAppBitsoOperation(JSONObject jsonObject){
@@ -60,69 +68,71 @@ public class AppBitsoOperation extends BitsoOperation {
         BigDecimal positiveAmount = null;
         BigDecimal negativeAmount = null;
         BigDecimal atPrice = null;
+        String secondCurrency;
+
+        mAmountCurrencyColor = R.color.ledger_amount_funding;
+        mStatusColor = R.color.ledger_status_ok;
+
         try {
-
             balanceUpdates = getOperationBalances(jsonObject.getJSONArray("balance_updates"));
-
             totalUpdates = balanceUpdates.length;
+
+            if(totalUpdates == 1){
+                BigDecimal amount = balanceUpdates[0].amount;
+
+                mCurrency = balanceUpdates[0].currency;
+                mAmount = processDecimals(amount, mCurrency).toString();
+
+                if(amount.doubleValue() < 0){
+                    mAmountCurrencyColor = R.color.bitso_red;
+                }
+            }
 
             switch (operationDescription){
                 case "funding":
                     mStatus = "Deposito completado";
                     operationDescription = BitsoLedgerOperations.FUNDING.toString();
-                    if(totalUpdates == 1){
-                        mAmount = balanceUpdates[0].amount.setScale(8,
-                                RoundingMode.DOWN).toString();
-                        mCurrency = balanceUpdates[0].currency;
-                    }
                     mOperationImage = processOperationImage(mCurrency);
                     break;
-
                 case "withdrawal":
                     mStatus = "Retiro completado";
                     operationDescription = BitsoLedgerOperations.WITHDRAWAL.toString();
-                    if(totalUpdates == 1){
-                        mAmount = balanceUpdates[0].amount.setScale(8,
-                                RoundingMode.DOWN).toString();
-                        mCurrency = balanceUpdates[0].currency;
-                    }
                     mOperationImage = processOperationImage(mCurrency);
+                    break;
+                case "fee":
+                    mStatus = "";
+                    operationDescription = BitsoLedgerOperations.FEE.toString();
+                    mOperationImage = R.drawable.user_convert;
                     break;
                 case "trade":
                     operationDescription = BitsoLedgerOperations.TRADE.toString();
                     mOperationImage = R.drawable.user_convert;
                     if(totalUpdates == 2){
-                        if((balanceUpdates[0].amount.intValue()) > 0){
+                        if((balanceUpdates[0].amount.doubleValue()) > 0){
                             positiveAmount = balanceUpdates[0].amount;
+                            mCurrency = balanceUpdates[0].currency;
                             negativeAmount = balanceUpdates[1].amount;
+                            secondCurrency = balanceUpdates[1].currency;
                         }else{
                             positiveAmount = balanceUpdates[1].amount;
+                            mCurrency = balanceUpdates[1].currency;
                             negativeAmount = balanceUpdates[0].amount;
+                            secondCurrency = balanceUpdates[0].currency;
                         }
 
-                        //atPrice = positiveAmount.divide(negativeAmount.abs());
+                        positiveAmount = processDecimals(positiveAmount, mCurrency);
+                        negativeAmount = processDecimals(negativeAmount, secondCurrency);
 
-                        positiveAmount.setScale(8,RoundingMode.DOWN);
-                        negativeAmount.setScale(8,RoundingMode.DOWN);
-                        //atPrice.setScale(2,RoundingMode.DOWN);
-
-                        //operationDescription += "(@" + "atPrice.toString()" + ")";
                         mAmount = positiveAmount.toString();
-                        mStatus = negativeAmount.toString();
-                    }
-                    break;
+                        mStatus = negativeAmount.toString() + " " + secondCurrency.toUpperCase();
 
-                case "fee":
-                    mStatus = "";
-                    operationDescription = BitsoLedgerOperations.FEE.toString();
-                    mOperationImage = R.drawable.user_convert;
-                    if(totalUpdates == 1){
-                        mAmount = balanceUpdates[0].amount.setScale(8,
-                                RoundingMode.DOWN).toString();
-                        mCurrency = balanceUpdates[0].currency;
+                        mStatusColor = R.color.bitso_red;
                     }
                     break;
             }
+
+            mCurrency = mCurrency.toUpperCase();
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -148,6 +158,16 @@ public class AppBitsoOperation extends BitsoOperation {
                 return R.drawable.user_btc;
             default:
                 return R.mipmap.ic_launcher;
+        }
+    }
+
+    private BigDecimal processDecimals(BigDecimal bigDecimal, String currency) {
+        switch (currency) {
+            case "eth":
+            case "btc":
+                return bigDecimal.setScale(8, RoundingMode.DOWN);
+            default:
+                return bigDecimal.setScale(2, RoundingMode.DOWN);
         }
     }
 
